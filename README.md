@@ -61,18 +61,32 @@ npm run dev
 ## Project Structure
 
 ```
-src/
-  engine/
-    cpm.ts          # scheduling engine — pure functions, no React
-    cpm.test.ts      # unit tests: hand-computed graphs
-  components/
-    Board/
-    TaskDetail/
-    Timeline/
-    Dashboard/
-  hooks/
-    useTasks.ts       # localStorage-backed task store
-  types.ts
+slackboard/
+├── src/
+│   ├── engine/
+│   │   ├── cpm.ts              # scheduling engine — pure functions, no React
+│   │   └── cpm.test.ts         # unit tests: hand-computed graphs
+│   ├── components/
+│   │   ├── Board/
+│   │   │   ├── Board.tsx
+│   │   │   ├── Column.tsx
+│   │   │   └── TaskCard.tsx
+│   │   ├── TaskDetail/
+│   │   │   └── TaskDetail.tsx
+│   │   ├── Timeline/
+│   │   │   ├── Timeline.tsx
+│   │   │   └── GanttBar.tsx
+│   │   └── Dashboard/
+│   │       └── Dashboard.tsx
+│   ├── hooks/
+│   │   └── useTasks.ts         # localStorage-backed task store
+│   ├── types.ts
+│   ├── App.tsx
+│   └── main.tsx
+├── public/
+├── index.html
+├── package.json
+└── vite.config.ts
 ```
 
 ## References
