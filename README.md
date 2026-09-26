@@ -2,7 +2,7 @@
 
 A Kanban board that understands task dependencies. Drag-and-drop like Trello, but every task can depend on others — and the board computes the real project schedule using the **Critical Path Method (CPM)**: earliest/latest start, earliest/latest finish, slack, and the critical path itself, recalculated live on every change.
 
-Built for [Full Stack Dev] mid-sem assignment. Base UI pattern adapted from a standard React Trello-clone tutorial; the scheduling engine is original work.
+Built for [Full Stack Development] mid-sem assignment. Base UI pattern adapted from a standard React Trello-clone tutorial; the scheduling engine is original work.
 
 ---
 
@@ -23,19 +23,36 @@ Every "Kanban clone" tutorial treats tasks as independent cards. Real projects a
 ## Tech Stack
 
 - React (Vite)
+- `react-router-dom` — client-side routing across Board / Task Detail / Timeline / Dashboard
 - `dnd-kit` — drag and drop for the board
 - Plain TypeScript/JS for the CPM engine (zero dependencies, unit-testable in isolation)
 - `localStorage` for persistence
 - No backend, no external API
 
+## React Concepts Demonstrated
+
+| Concept | Where |
+|---|---|
+| Functional components | `Board`, `Column`, `TaskCard`, `TaskDetail`, `Timeline`, `GanttBar` |
+| Class component | `Dashboard` — `extends React.Component`, holds no complex state, purely demonstrates lifecycle (`componentDidMount`/`componentDidUpdate` recompute the summary on schedule change) |
+| Parent → Child + Props | `Board` passes `tasks`/`onDrop` to `Column`, `Column` passes a single `task` to `TaskCard` |
+| `useState` | task list, form fields in `TaskDetail`, drag state in `Board` |
+| `useEffect` | (1) persist `tasks` to `localStorage` on every change (2) recompute the CPM `Schedule` whenever `tasks` changes |
+| Event handling | click (drag/drop, delete), change (form inputs), submit (task form) |
+| Form handling | `TaskDetail` — create/edit task, duration input, dependency multi-select |
+| Client-side routing | `react-router-dom` — `/board`, `/task/:id`, `/timeline`, `/dashboard` |
+| Responsive UI | CSS Grid/Flexbox layout, board columns stack vertically below a breakpoint, timeline scrolls horizontally on small screens |
+
 ## Pages
+
+Routed with `react-router-dom` (`BrowserRouter` / `Routes` / `Route`, `useParams` for `:id`, `useNavigate` for programmatic navigation after form submit).
 
 | Route | Purpose |
 |---|---|
 | `/board` | Kanban board, drag-drop across columns |
-| `/task/:id` | Task detail — edit duration, pick dependencies |
+| `/task/:id` | Task detail — edit duration, pick dependencies (form) |
 | `/timeline` | Gantt view, critical path highlighted |
-| `/dashboard` | Project summary — total duration, critical tasks, slip impact |
+| `/dashboard` | Project summary — total duration, critical tasks, slip impact (class component) |
 
 ## How the scheduling works
 
@@ -77,7 +94,7 @@ slackboard/
 │   │   │   ├── Timeline.tsx
 │   │   │   └── GanttBar.tsx
 │   │   └── Dashboard/
-│   │       └── Dashboard.tsx
+│   │       └── Dashboard.tsx    # class component
 │   ├── hooks/
 │   │   └── useTasks.ts         # localStorage-backed task store
 │   ├── types.ts
