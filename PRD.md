@@ -53,6 +53,9 @@ SlackBoard answers both, live, using the Critical Path Method.
 | FR7 | Render timeline view: task bars positioned by ES→EF, critical path visually flagged |
 | FR8 | Render dashboard: project end date, task count, critical task list |
 | FR9 | Persist all state to `localStorage`; reload restores full state |
+| FR10 | Multiple views reachable via client-side routing (`react-router-dom`), not conditional rendering |
+| FR11 | Dashboard implemented as a class component (`extends React.Component`) |
+| FR12 | Layout must remain usable on mobile widths (board columns stack, timeline scrolls horizontally) |
 
 ## 7. Algorithm Spec (Critical Path Method)
 
@@ -129,7 +132,39 @@ type Schedule = {
 - Timeline visually and correctly distinguishes critical vs. non-critical tasks
 - Editing a critical task's duration changes the displayed project end date; editing a non-critical task within its slack does not
 
-## 12. References
+## 12. Modifications Beyond Tutorial (CIE-2 requirement: minimum two)
+
+The base tutorial (React Trello-clone) only implements: add task, delete/edit task, drag between columns. Two distinct additions on top of that:
+
+1. **Dependency modeling + cycle prevention** — tasks can declare dependencies on other tasks; the UI rejects any dependency that would create a cycle at selection time (topological-sort check), which the base tutorial has no concept of at all.
+2. **Critical Path computation + live schedule visualization** — full CPM engine (forward/backward pass, slack) recomputed on every change, surfaced as a Gantt timeline with the critical path visually distinct and a dashboard showing project end date / slip impact — the base tutorial has no scheduling or timeline view whatsoever.
+
+These are kept as two separately identifiable features (not one blob) specifically so each can be pointed to independently in the "Modifications Made" section of the report.
+
+## 13. CIE-2 Assignment Compliance Map
+
+| Required Concept | Minimum Requirement | Where It's Satisfied |
+|---|---|---|
+| Components | App divided into reusable components | `Board`, `Column`, `TaskCard`, `TaskDetail`, `Timeline`, `GanttBar`, `Dashboard` |
+| Class Component | At least one | `Dashboard` (`extends React.Component`) |
+| Functional Components | Used for major UI sections | `Board`, `Column`, `TaskCard`, `TaskDetail`, `Timeline`, `GanttBar` |
+| Parent–Child | Data passed parent→child | `Board` → `Column` → `TaskCard`; `Timeline` → `GanttBar` |
+| Props | Used to pass data/config | `task`, `onDrop`, `schedule`, `isCritical` passed as props throughout |
+| `useState` | State managed with useState | task list, form fields, drag state |
+| `useEffect` | Appropriate side effect | persist `tasks` → `localStorage`; recompute `Schedule` on `tasks` change |
+| Event Handling | click/change/submit | drag-drop (click+drag), form inputs (change), task form (submit) |
+| Form Handling | At least one functional form | `TaskDetail` — title, duration, dependency multi-select |
+| Client-Side Routing | Multiple views via React Router | `/board`, `/task/:id`, `/timeline`, `/dashboard` |
+| Responsive UI | Works across screen sizes | Flexbox/Grid layout, board stacks vertically below breakpoint, timeline scrolls horizontally |
+| Two+ Modifications | Beyond tutorial scope | See Section 12 |
+
+## 14. References
 
 - Kelley, J.E. & Walker, M.R. (1959). *Critical-Path Planning and Scheduling.*
 - Base Kanban tutorial reference: [React Trello Clone] — UI/drag-drop starting point, extended with dependency modeling + CPM engine (original contribution).
+
+## 15. Note on Final Submission Report
+
+CIE-2 requires a specific documentation structure for submission: Title, Problem Statement, Project Objective, Technologies Used, Selected YouTube Tutorial, System/Component Structure, Important React Concepts Implemented, Screenshots, Modifications Made, Challenges Faced, Conclusion, GitHub Link, YouTube Tutorial Link.
+
+This PRD is planning documentation, not that submission report — it's ordered for engineering clarity, not grading. Screenshots and Challenges Faced can't be written until the app exists. Once implementation is done, build the actual submission doc from this PRD + README (Sections 1, 6, 13, 12, 14 map directly) rather than repurposing this file as-is. Say the word once you've got a working build and I'll draft that report in the exact required structure.
