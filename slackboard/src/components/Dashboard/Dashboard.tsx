@@ -57,51 +57,53 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
     });
 
     return (
-      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', fontFamily: 'sans-serif' }}>
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
         <h2>Dashboard</h2>
         
         {showUpdateBanner && (
-          <div style={{ background: '#e6f7ff', border: '1px solid #91d5ff', padding: '10px', marginBottom: '20px', borderRadius: '4px', color: '#096dd9' }}>
+          <div className="schedule-updated-banner">
             Schedule updated: Project duration changed!
           </div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '30px' }}>
-          <div style={{ background: '#f5f5f5', padding: '20px', borderRadius: '8px', textAlign: 'center' }}>
-            <div style={{ fontSize: '2em', fontWeight: 'bold' }}>{schedule.projectDuration}</div>
-            <div>Total Project Duration (days)</div>
+        <div className="dashboard-grid">
+          <div className="card" style={{ textAlign: 'center' }}>
+            <div className="stat-value">{schedule.projectDuration}</div>
+            <div className="stat-label">Total Project Duration (days)</div>
           </div>
           
-          <div style={{ background: '#f5f5f5', padding: '20px', borderRadius: '8px', textAlign: 'center' }}>
-            <div style={{ fontSize: '2em', fontWeight: 'bold' }}>{tasks.length}</div>
-            <div>Total Tasks</div>
+          <div className="card" style={{ textAlign: 'center' }}>
+            <div className="stat-value">{tasks.length}</div>
+            <div className="stat-label">Total Tasks</div>
           </div>
         </div>
 
         <div style={{ marginBottom: '30px' }}>
           <h3>Critical Path Tasks ({criticalTasks.length})</h3>
           {criticalTasks.length > 0 ? (
-            <ul style={{ background: '#fff1f0', padding: '20px 40px', borderRadius: '8px', border: '1px solid #ffa39e' }}>
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {criticalTasks.map(t => (
-                <li key={t.id} style={{ color: '#cf1322', fontWeight: 'bold' }}>
-                  {t.title} ({t.duration} days)
-                </li>
+                <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span className="badge-critical">Critical</span>
+                  <strong>{t.title}</strong>
+                  <span className="duration" style={{ color: 'var(--text-muted)' }}>({t.duration} days)</span>
+                </div>
               ))}
-            </ul>
+            </div>
           ) : (
-            <p>No critical tasks identified.</p>
+            <p style={{ color: 'var(--text-muted)' }}>No critical tasks identified.</p>
           )}
         </div>
 
         <div>
           <h3>"What-If" Analysis</h3>
           {longestSlackTask ? (
-            <div style={{ background: '#f6ffed', padding: '20px', borderRadius: '8px', border: '1px solid #b7eb8f' }}>
+            <div className="card" style={{ background: 'var(--slack-bg)' }}>
               Task <strong>{(longestSlackTask as Task).title}</strong> has the most slack. 
-              It could slip by up to <strong>{maxSlack} days</strong> risk-free without delaying the total project end date.
+              It could slip by up to <strong className="duration">{maxSlack} days</strong> risk-free without delaying the total project end date.
             </div>
           ) : (
-            <div style={{ background: '#fafafa', padding: '20px', borderRadius: '8px', border: '1px solid #d9d9d9' }}>
+            <div className="card">
               All tasks are critical. Any delay to any task will delay the project.
             </div>
           )}

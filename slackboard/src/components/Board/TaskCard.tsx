@@ -15,30 +15,25 @@ export function TaskCard({ task, onDelete }: TaskCardProps) {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    padding: '10px',
-    margin: '0 0 8px 0',
-    backgroundColor: 'white',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    cursor: 'grab'
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} onClick={() => navigate(`/task/${task.id}`)}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <strong>{task.title}</strong>
+    <div ref={setNodeRef} style={style} className="card task-card" {...attributes} {...listeners} onClick={() => navigate(`/task/${task.id}`)}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div className="task-card-title">{task.title}</div>
         <button 
           onClick={(e) => {
             e.stopPropagation();
             onDelete(task.id);
           }}
-          style={{ cursor: 'pointer', background: 'transparent', border: 'none', color: 'red' }}
+          style={{ background: 'transparent', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', padding: 0 }}
         >
-          X
+          ✕
         </button>
       </div>
-      <div style={{ fontSize: '0.85em', color: '#666', marginTop: '4px' }}>
-        Duration: {task.duration} day(s)
+      <div className="task-card-meta">
+        <span className="task-id">#{task.id.slice(0, 4)}</span>
+        <span className="duration">{task.duration}d</span>
       </div>
     </div>
   );

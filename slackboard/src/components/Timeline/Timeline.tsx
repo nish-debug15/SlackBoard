@@ -41,8 +41,8 @@ export function Timeline({ tasks, schedule }: TimelineProps) {
   }
 
   return (
-    <div style={{ overflowX: 'auto', padding: '20px 0', border: '1px solid #ddd', borderRadius: '8px', background: 'white' }}>
-      <div style={{ position: 'relative', width: `${containerWidth}px`, minHeight: `${tasks.length * 50 + 40}px`, marginTop: '30px' }}>
+    <div className="card" style={{ overflowX: 'auto', padding: '20px', marginTop: '20px' }}>
+      <div style={{ position: 'relative', width: `${containerWidth}px`, minHeight: `${tasks.length * 36 + 40}px`, marginTop: '30px' }}>
         {gridLines}
         <div style={{ position: 'relative', zIndex: 1 }}>
           {tasks.map(task => {

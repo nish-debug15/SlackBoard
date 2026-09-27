@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import { useTasks } from './hooks/useTasks';
 import { Board } from './components/Board/Board';
 import { TaskDetail } from './components/TaskDetail/TaskDetail';
@@ -7,11 +7,11 @@ import { Dashboard } from './components/Dashboard/Dashboard';
 
 function NavBar() {
   return (
-    <nav style={{ padding: '1rem', borderBottom: '1px solid #ccc', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-      <Link to="/board" style={{ padding: '8px' }}>Board</Link>
-      <Link to="/timeline" style={{ padding: '8px' }}>Timeline</Link>
-      <Link to="/dashboard" style={{ padding: '8px' }}>Dashboard</Link>
-      <Link to="/task/new" style={{ padding: '8px' }}>New Task</Link>
+    <nav className="nav">
+      <NavLink to="/board" className={({ isActive }) => (isActive ? 'active' : '')}>Board</NavLink>
+      <NavLink to="/timeline" className={({ isActive }) => (isActive ? 'active' : '')}>Timeline</NavLink>
+      <NavLink to="/dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>Dashboard</NavLink>
+      <NavLink to="/task/new" className={({ isActive }) => (isActive ? 'active' : '')}>New Task</NavLink>
     </nav>
   );
 }

@@ -37,13 +37,7 @@ export function Board({ tasks, moveTask, deleteTask }: BoardProps) {
 
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <div 
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '20px'
-        }}
-      >
+      <div className="board">
         <Column id="todo" title={columns.todo.title} tasks={columns.todo.tasks} onDeleteTask={deleteTask} />
         <Column id="inprogress" title={columns.inprogress.title} tasks={columns.inprogress.tasks} onDeleteTask={deleteTask} />
         <Column id="done" title={columns.done.title} tasks={columns.done.tasks} onDeleteTask={deleteTask} />

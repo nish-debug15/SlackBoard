@@ -14,17 +14,11 @@ export function Column({ id, title, tasks, onDeleteTask }: ColumnProps) {
   const { setNodeRef } = useDroppable({ id });
 
   return (
-    <div 
-      ref={setNodeRef} 
-      style={{
-        flex: 1,
-        backgroundColor: '#f4f5f7',
-        padding: '10px',
-        borderRadius: '8px',
-        minHeight: '200px'
-      }}
-    >
-      <h3>{title} ({tasks.length})</h3>
+    <div ref={setNodeRef} className="column">
+      <div className="column-header">
+        <div className={`column-dot ${id === 'inprogress' ? 'progress' : id}`} />
+        <span>{title} ({tasks.length})</span>
+      </div>
       <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
         {tasks.map(task => (
           <TaskCard key={task.id} task={task} onDelete={onDeleteTask} />

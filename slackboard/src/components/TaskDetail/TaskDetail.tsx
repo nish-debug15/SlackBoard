@@ -88,46 +88,45 @@ export function TaskDetail({ tasks, addTask, updateTask }: TaskDetailProps) {
   const otherTasks = tasks.filter(t => t.id !== id);
 
   return (
-    <div style={{ maxWidth: '500px', margin: '0 auto', background: '#f9f9f9', padding: '20px', borderRadius: '8px' }}>
+    <div className="card" style={{ maxWidth: '500px', margin: '0 auto' }}>
       <h2>{isNew ? 'New Task' : 'Edit Task'}</h2>
-      {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+      {error && <div className="error-text">{error}</div>}
       
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-        <div>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Title</label>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', marginTop: '16px' }}>
+        <div className="field">
+          <label>Title</label>
           <input 
             type="text" 
             value={title} 
             onChange={e => setTitle(e.target.value)} 
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
           />
         </div>
 
-        <div>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Duration (days)</label>
+        <div className="field">
+          <label>Duration (days)</label>
           <input 
             type="number" 
             value={duration} 
             onChange={e => setDuration(Number(e.target.value))}
             min={1}
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+            className="duration"
           />
         </div>
 
-        <div>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Dependencies</label>
+        <div className="field">
+          <label>Dependencies</label>
           {otherTasks.length === 0 ? (
-            <div style={{ color: '#666', fontSize: '0.9em' }}>No other tasks to depend on.</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: '13px' }}>No other tasks to depend on.</div>
           ) : (
-            <div style={{ border: '1px solid #ccc', padding: '10px', borderRadius: '4px', background: 'white' }}>
+            <div style={{ border: '1px solid var(--border)', padding: '10px', borderRadius: 'var(--radius)' }}>
               {otherTasks.map(task => (
-                <div key={task.id} style={{ marginBottom: '5px' }}>
-                  <label>
+                <div key={task.id} style={{ marginBottom: '8px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', fontWeight: 'normal', margin: 0, fontSize: '14px', color: 'var(--text)' }}>
                     <input 
                       type="checkbox"
                       checked={dependsOn.includes(task.id)}
                       onChange={e => handleDependencyChange(task.id, e.target.checked)}
-                      style={{ marginRight: '8px' }}
+                      style={{ marginRight: '8px', width: 'auto' }}
                     />
                     {task.title}
                   </label>
@@ -137,11 +136,11 @@ export function TaskDetail({ tasks, addTask, updateTask }: TaskDetailProps) {
           )}
         </div>
 
-        <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-          <button type="submit" style={{ padding: '8px 16px', background: '#0052cc', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+        <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+          <button type="submit" className="btn-primary">
             Save
           </button>
-          <button type="button" onClick={() => navigate('/board')} style={{ padding: '8px 16px', background: '#ccc', color: 'black', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+          <button type="button" className="btn" onClick={() => navigate('/board')}>
             Cancel
           </button>
         </div>
