@@ -70,15 +70,6 @@
       ]
     },
     {
-      "id": "review",
-      "title": "Content Review",
-      "column": "todo",
-      "duration": 2,
-      "dependsOn": [
-        "docs"
-      ]
-    },
-    {
       "id": "analytics",
       "title": "Analytics Setup",
       "column": "todo",
@@ -100,8 +91,7 @@
       "column": "todo",
       "duration": 2,
       "dependsOn": [
-        "qa",
-        "review"
+        "qa"
       ]
     },
     {
