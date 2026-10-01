@@ -39,15 +39,22 @@ async function callClaude(systemPrompt: string, userMessage: string, retryWithEr
     messages.push({ role: 'user', content: userMessage });
   }
 
-  const response = await client.messages.create({
-    model,
-    max_tokens: 2048,
-    system: systemPrompt,
-    messages,
-  });
+  try {
+    const response = await client.messages.create({
+      model,
+      max_tokens: 2048,
+      system: systemPrompt,
+      messages,
+    });
 
-  const textBlock = response.content.find(b => b.type === 'text');
-  return textBlock ? textBlock.text : '';
+    const textBlock = response.content.find(b => b.type === 'text');
+    return textBlock ? textBlock.text : '';
+  } catch (err: any) {
+    if (err.status === 401) {
+      throw new AppError(401, 'Invalid Anthropic API Key. Please update it or set COPILOT_MODE=mock in .env');
+    }
+    throw new AppError(500, err.message || 'Failed to communicate with AI Copilot');
+  }
 }
 
 function parsePlanFromResponse(text: string): Array<{ tempId: string; title: string; duration: number; dependsOn: string[] }> {

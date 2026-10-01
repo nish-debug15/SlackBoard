@@ -6,23 +6,23 @@
 
 :root {
   /* --- Color Mode: Dark (default) --- */
-  --color-bg-0: #0a0a0b;
-  --color-bg-1: #111113;
-  --color-bg-2: #18181b;
-  --color-bg-3: #1e1e22;
-  --color-bg-4: #252529;
-  --color-bg-5: #2c2c31;
+  --color-bg-0: #09090b;
+  --color-bg-1: #18181b;
+  --color-bg-2: #27272a;
+  --color-bg-3: #3f3f46;
+  --color-bg-4: #52525b;
+  --color-bg-5: #71717a;
 
-  --color-border-0: #1e1e22;
-  --color-border-1: #2a2a2f;
-  --color-border-2: #35353b;
-  --color-border-3: #404047;
+  --color-border-0: #18181b;
+  --color-border-1: #27272a;
+  --color-border-2: #3f3f46;
+  --color-border-3: #52525b;
 
-  --color-text-0: #fafafa;
-  --color-text-1: #e4e4e7;
-  --color-text-2: #a1a1aa;
-  --color-text-3: #71717a;
-  --color-text-4: #52525b;
+  --color-text-0: #ffffff;
+  --color-text-1: #f4f4f5;
+  --color-text-2: #d4d4d8;
+  --color-text-3: #a1a1aa;
+  --color-text-4: #71717a;
 
   /* Accent — primary actions and focus only */
   --color-accent: #3b82f6;
