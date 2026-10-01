@@ -1,0 +1,199 @@
+/* ==========================================================================
+   SlackBoard Design Tokens
+   Direction: precise, quiet, instrument-like. Information density is a feature.
+   4px grid. Radii: 4/6/8 only. Hairline borders. No shadows.
+   ========================================================================== */
+
+:root {
+  /* --- Color Mode: Dark (default) --- */
+  --color-bg-0: #0a0a0b;
+  --color-bg-1: #111113;
+  --color-bg-2: #18181b;
+  --color-bg-3: #1e1e22;
+  --color-bg-4: #252529;
+  --color-bg-5: #2c2c31;
+
+  --color-border-0: #1e1e22;
+  --color-border-1: #2a2a2f;
+  --color-border-2: #35353b;
+  --color-border-3: #404047;
+
+  --color-text-0: #fafafa;
+  --color-text-1: #e4e4e7;
+  --color-text-2: #a1a1aa;
+  --color-text-3: #71717a;
+  --color-text-4: #52525b;
+
+  /* Accent — primary actions and focus only */
+  --color-accent: #3b82f6;
+  --color-accent-hover: #2563eb;
+  --color-accent-muted: rgba(59, 130, 246, 0.15);
+  --color-accent-text: #93bbfc;
+
+  /* Critical — warm amber/red-orange, used consistently everywhere */
+  --color-critical: #f97316;
+  --color-critical-bg: rgba(249, 115, 22, 0.1);
+  --color-critical-border: rgba(249, 115, 22, 0.25);
+  --color-critical-text: #fb923c;
+
+  /* Status — muted semantic colors */
+  --color-status-todo: #71717a;
+  --color-status-inprogress: #eab308;
+  --color-status-done: #22c55e;
+
+  --color-status-todo-bg: rgba(113, 113, 122, 0.1);
+  --color-status-inprogress-bg: rgba(234, 179, 8, 0.1);
+  --color-status-done-bg: rgba(34, 197, 94, 0.1);
+
+  /* Slack */
+  --color-slack: #52525b;
+  --color-slack-bg: rgba(82, 82, 91, 0.15);
+
+  /* Success / Error */
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+  --color-error-bg: rgba(239, 68, 68, 0.1);
+
+  /* --- Spacing (4px grid) --- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+
+  /* --- Radii --- */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  /* --- Typography --- */
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --text-2xs: 12px;
+  --text-xs: 13px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 20px;
+  --text-xl: 28px;
+
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  /* --- Motion --- */
+  --duration-fast: 120ms;
+  --duration-normal: 150ms;
+  --duration-slow: 180ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* --- Sidebar --- */
+  --sidebar-width: 200px;
+  --topbar-height: 48px;
+}
+
+/* --- Light Theme --- */
+.light,
+[data-theme='light'] {
+  --color-bg-0: #ffffff;
+  --color-bg-1: #fafafa;
+  --color-bg-2: #f4f4f5;
+  --color-bg-3: #e4e4e7;
+  --color-bg-4: #d4d4d8;
+  --color-bg-5: #a1a1aa;
+
+  --color-border-0: #f4f4f5;
+  --color-border-1: #e4e4e7;
+  --color-border-2: #d4d4d8;
+  --color-border-3: #a1a1aa;
+
+  --color-text-0: #09090b;
+  --color-text-1: #18181b;
+  --color-text-2: #52525b;
+  --color-text-3: #71717a;
+  --color-text-4: #a1a1aa;
+
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-accent-muted: rgba(37, 99, 235, 0.1);
+  --color-accent-text: #1d4ed8;
+
+  --color-critical: #ea580c;
+  --color-critical-bg: rgba(234, 88, 12, 0.08);
+  --color-critical-border: rgba(234, 88, 12, 0.2);
+  --color-critical-text: #c2410c;
+
+  --color-status-todo: #a1a1aa;
+  --color-status-inprogress: #ca8a04;
+  --color-status-done: #16a34a;
+
+  --color-status-todo-bg: rgba(161, 161, 170, 0.1);
+  --color-status-inprogress-bg: rgba(202, 138, 4, 0.1);
+  --color-status-done-bg: rgba(22, 163, 74, 0.1);
+
+  --color-slack: #a1a1aa;
+  --color-slack-bg: rgba(161, 161, 170, 0.1);
+
+  --color-error: #dc2626;
+  --color-error-bg: rgba(220, 38, 38, 0.08);
+}
+
+/* --- Auto theme from OS --- */
+@media (prefers-color-scheme: light) {
+  :root:not(.dark):not([data-theme='dark']) {
+    --color-bg-0: #ffffff;
+    --color-bg-1: #fafafa;
+    --color-bg-2: #f4f4f5;
+    --color-bg-3: #e4e4e7;
+    --color-bg-4: #d4d4d8;
+    --color-bg-5: #a1a1aa;
+
+    --color-border-0: #f4f4f5;
+    --color-border-1: #e4e4e7;
+    --color-border-2: #d4d4d8;
+    --color-border-3: #a1a1aa;
+
+    --color-text-0: #09090b;
+    --color-text-1: #18181b;
+    --color-text-2: #52525b;
+    --color-text-3: #71717a;
+    --color-text-4: #a1a1aa;
+
+    --color-accent: #2563eb;
+    --color-accent-hover: #1d4ed8;
+    --color-accent-muted: rgba(37, 99, 235, 0.1);
+    --color-accent-text: #1d4ed8;
+
+    --color-critical: #ea580c;
+    --color-critical-bg: rgba(234, 88, 12, 0.08);
+    --color-critical-border: rgba(234, 88, 12, 0.2);
+    --color-critical-text: #c2410c;
+
+    --color-status-todo: #a1a1aa;
+    --color-status-inprogress: #ca8a04;
+    --color-status-done: #16a34a;
+
+    --color-status-todo-bg: rgba(161, 161, 170, 0.1);
+    --color-status-inprogress-bg: rgba(202, 138, 4, 0.1);
+    --color-status-done-bg: rgba(22, 163, 74, 0.1);
+
+    --color-slack: #a1a1aa;
+    --color-slack-bg: rgba(161, 161, 170, 0.1);
+
+    --color-error: #dc2626;
+    --color-error-bg: rgba(220, 38, 38, 0.08);
+  }
+}
+
+/* --- Reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
