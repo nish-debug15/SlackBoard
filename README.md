@@ -27,7 +27,7 @@ Built as a full-stack monorepo with an Express.js backend and a React client.
 ### Server
 - Express.js
 - `zod` for request validation
-- `@anthropic-ai/sdk` for the Copilot (Claude 3.5 Sonnet)
+- `groq-sdk` for the Copilot (Llama 3.3 70B)
 - `express-rate-limit` and `helmet` for security
 - JSON file persistence (`server/data/db.json`)
 
@@ -44,7 +44,7 @@ npm install
 2. **Set up environment variables:**
 ```bash
 cp .env.example .env
-# Add your Anthropic API key to .env if you want to use the real AI Copilot (otherwise it runs in mock mode)
+# Add your Groq API key to .env if you want to use the real AI Copilot (otherwise it runs in mock mode)
 ```
 
 3. **Start the development servers:**

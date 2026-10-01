@@ -21,15 +21,17 @@ const MOCK_PLAN = {
 };
 
 function isMockMode(): boolean {
-  return !process.env.ANTHROPIC_API_KEY || process.env.COPILOT_MODE === 'mock';
+  return !process.env.GROQ_API_KEY || process.env.COPILOT_MODE === 'mock';
 }
 
-async function callClaude(systemPrompt: string, userMessage: string, retryWithError?: string): Promise<string> {
-  const Anthropic = (await import('@anthropic-ai/sdk')).default;
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  const model = process.env.ANTHROPIC_MODEL || 'claude-sonnet-5-5';
+async function callGroq(systemPrompt: string, userMessage: string, retryWithError?: string): Promise<string> {
+  const Groq = (await import('groq-sdk')).default;
+  const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  const model = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
 
-  const messages: Array<{ role: 'user' | 'assistant'; content: string }> = [];
+  const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
+    { role: 'system', content: systemPrompt }
+  ];
   
   if (retryWithError) {
     messages.push({ role: 'user', content: userMessage });
@@ -40,18 +42,17 @@ async function callClaude(systemPrompt: string, userMessage: string, retryWithEr
   }
 
   try {
-    const response = await client.messages.create({
+    const response = await client.chat.completions.create({
       model,
       max_tokens: 2048,
-      system: systemPrompt,
+      temperature: 0.1,
       messages,
     });
 
-    const textBlock = response.content.find(b => b.type === 'text');
-    return textBlock ? textBlock.text : '';
+    return response.choices[0]?.message?.content || '';
   } catch (err: any) {
     if (err.status === 401) {
-      throw new AppError(401, 'Invalid Anthropic API Key. Please update it or set COPILOT_MODE=mock in .env');
+      throw new AppError(401, 'Invalid Groq API Key. Please update it or set COPILOT_MODE=mock in .env');
     }
     throw new AppError(500, err.message || 'Failed to communicate with AI Copilot');
   }
@@ -128,7 +129,7 @@ Respond with ONLY a JSON array of task objects. Each object must have:
 Do NOT create circular dependencies. Tasks can only depend on tasks that come before them in the array.
 Respond with ONLY the JSON array, no other text.`;
 
-    let responseText = await callClaude(systemPrompt, prompt);
+    let responseText = await callGroq(systemPrompt, prompt);
     let proposedTasks = parsePlanFromResponse(responseText);
 
     // Validate no cycles
@@ -146,7 +147,7 @@ Respond with ONLY the JSON array, no other text.`;
     let testSchedule = computeSchedule(allTasks);
     if (allTasks.length > 0 && Object.keys(testSchedule.entries).length === 0) {
       // Cycle detected - retry once
-      responseText = await callClaude(systemPrompt, prompt, 'The proposed dependencies created a cycle.');
+      responseText = await callGroq(systemPrompt, prompt, 'The proposed dependencies created a cycle.');
       proposedTasks = parsePlanFromResponse(responseText);
 
       const retryTasks: Task[] = [
@@ -242,7 +243,7 @@ ${slipInfo}
 
 Explain clearly and concisely. Use the specific numbers from the schedule. Do not perform CPM calculations yourself — use the pre-computed values above.`;
 
-    const responseText = await callClaude(systemPrompt, question);
+    const responseText = await callGroq(systemPrompt, question);
 
     res.json({
       mock: false,
