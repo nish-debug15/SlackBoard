@@ -138,9 +138,13 @@ export function Timeline() {
           >
             {/* Header spacer */}
             <div
-              className="border-b"
+              className="border-b flex items-end px-3 pb-1"
               style={{ height: `${HEADER_HEIGHT}px`, borderColor: 'var(--color-border-0)' }}
-            />
+            >
+              <span className="text-2xs font-medium uppercase tracking-wider" style={{ color: 'var(--color-text-3)' }}>
+                Task
+              </span>
+            </div>
             {/* Task labels */}
             {displayTasks.map(task => {
               const entry = schedule.entries[task.id];
@@ -158,7 +162,7 @@ export function Timeline() {
                   onMouseLeave={() => setHoveredTaskId(null)}
                 >
                   <span
-                    className="text-xs truncate flex-1"
+                    className="text-xs truncate flex-1 pr-2"
                     style={{ color: 'var(--color-text-1)' }}
                   >
                     {task.title}
@@ -254,16 +258,20 @@ export function Timeline() {
                     const midX = (startX + endX) / 2;
 
                     const isBothCritical = depEntry.isCritical && fromEntry.isCritical;
+                    const isPartInChain = highlightedChain ? (highlightedChain.has(task.id) && highlightedChain.has(depId)) : false;
+                    
+                    // Show connectors only for critical path, or when hovering their chain
+                    if (!isBothCritical && !isPartInChain) return null;
 
                     return (
                       <path
                         key={`${depId}-${task.id}`}
                         d={`M ${startX} ${startY} L ${midX} ${startY} L ${midX} ${endY} L ${endX} ${endY}`}
                         fill="none"
-                        stroke={isBothCritical ? 'var(--color-critical)' : 'var(--color-border-2)'}
-                        strokeWidth={isBothCritical ? 1.5 : 1}
-                        strokeDasharray={isBothCritical ? 'none' : '4,2'}
-                        opacity={0.6}
+                        stroke={isPartInChain || isBothCritical ? 'var(--color-critical)' : 'var(--color-border-2)'}
+                        strokeWidth={isPartInChain || isBothCritical ? 1.5 : 1}
+                        strokeDasharray={isBothCritical && !isPartInChain ? 'none' : 'none'} // Solid if shown
+                        opacity={isPartInChain ? 1 : 0.6}
                       />
                     );
                   });

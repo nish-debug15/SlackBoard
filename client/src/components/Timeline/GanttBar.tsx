@@ -56,19 +56,6 @@ export function GanttBar({
           opacity: isHighlighted ? 1 : 0.85,
           position: 'relative',
         }}
-      >
-        {/* Task name inside bar if it fits */}
-        {barWidth > 60 && (
-          <span
-            className="absolute inset-0 flex items-center px-1.5 text-2xs font-medium truncate"
-            style={{
-              color: entry.isCritical ? '#fff' : 'var(--color-text-1)',
-              fontSize: '10px',
-            }}
-          >
-            {task.title}
-          </span>
-        )}
       </div>
 
       {/* Slack bar (hatched) */}

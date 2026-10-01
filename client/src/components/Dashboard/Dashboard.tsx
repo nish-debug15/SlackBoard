@@ -84,8 +84,12 @@ class DashboardInner extends React.Component<DashboardProps, DashboardState> {
     const { slipTaskId, slipDays, sortField, sortAsc } = this.state;
 
     const criticalTasks = tasks.filter(t => schedule.entries[t.id]?.isCritical);
+    const nearCriticalCount = tasks.filter(t => {
+      const slack = schedule.entries[t.id]?.slack;
+      return slack !== undefined && slack > 0 && slack <= 2;
+    }).length;
+    
     const doneTasks = tasks.filter(t => t.column === 'done');
-    const totalFloat = Object.values(schedule.entries).reduce((sum, e) => sum + e.slack, 0);
     const endDate = this.getEndDate();
 
     // Slip calculation
@@ -104,7 +108,9 @@ class DashboardInner extends React.Component<DashboardProps, DashboardState> {
         case 'title': cmp = a.title.localeCompare(b.title); break;
         case 'es': cmp = ea.es - eb.es; break;
         case 'ef': cmp = ea.ef - eb.ef; break;
-        case 'slack': cmp = ea.slack - eb.slack; break;
+        case 'ls': cmp = ea.ls - eb.ls; break;
+        case 'lf': cmp = ea.lf - eb.lf; break;
+        default: cmp = 0; break;
       }
       return sortAsc ? cmp : -cmp;
     });
@@ -117,7 +123,8 @@ class DashboardInner extends React.Component<DashboardProps, DashboardState> {
       .sort((a, b) => (a.entry!.slack - b.entry!.slack));
 
     return (
-      <div className="space-y-4 max-w-[960px] mx-auto">
+      <div className="space-y-4">
+        <h1 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-text-0)' }}>Project Dashboard</h1>
         {/* KPI Strip */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {/* Project Duration */}
@@ -145,13 +152,13 @@ class DashboardInner extends React.Component<DashboardProps, DashboardState> {
             </div>
           </div>
 
-          {/* Total Float */}
+          {/* Near Critical */}
           <div className="rounded-lg border p-4" style={{ borderColor: 'var(--color-border-1)', background: 'var(--color-bg-1)' }}>
             <div className="text-2xs uppercase tracking-wider mb-2" style={{ color: 'var(--color-text-3)' }}>
-              Total Float
+              Near Critical (≤2d)
             </div>
-            <div className="font-mono text-xl font-semibold" style={{ color: 'var(--color-text-0)', fontFamily: 'var(--font-mono)' }}>
-              {totalFloat}<span className="text-base" style={{ color: 'var(--color-text-3)' }}>d</span>
+            <div className="font-mono text-xl font-semibold" style={{ color: 'var(--color-status-inprogress)', fontFamily: 'var(--font-mono)' }}>
+              {nearCriticalCount}<span className="text-base" style={{ color: 'var(--color-text-3)' }}></span>
             </div>
           </div>
 
@@ -185,7 +192,7 @@ class DashboardInner extends React.Component<DashboardProps, DashboardState> {
                   <React.Fragment key={taskId}>
                     <button
                       onClick={() => navigate(`/task/${taskId}`)}
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded border transition-colors duration-100"
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded border transition-colors duration-100 whitespace-nowrap"
                       style={{
                         borderColor: 'var(--color-critical-border)',
                         background: 'var(--color-critical-bg)',
@@ -201,7 +208,9 @@ class DashboardInner extends React.Component<DashboardProps, DashboardState> {
                       </span>
                     </button>
                     {i < schedule.criticalPath.length - 1 && (
-                      <ArrowRight size={14} strokeWidth={1.5} style={{ color: 'var(--color-critical)', opacity: 0.4 }} />
+                      <div className="px-1 shrink-0">
+                        <ArrowRight size={14} strokeWidth={1.5} style={{ color: 'var(--color-critical)', opacity: 0.4 }} />
+                      </div>
                     )}
                   </React.Fragment>
                 );
@@ -230,7 +239,8 @@ class DashboardInner extends React.Component<DashboardProps, DashboardState> {
                         { key: 'title' as const, label: 'Task' },
                         { key: 'es' as const, label: 'ES' },
                         { key: 'ef' as const, label: 'EF' },
-                        { key: 'slack' as const, label: 'Slack' },
+                        { key: 'ls' as const, label: 'LS' },
+                        { key: 'lf' as const, label: 'LF' },
                       ].map(col => (
                         <th
                           key={col.key}
@@ -272,7 +282,10 @@ class DashboardInner extends React.Component<DashboardProps, DashboardState> {
                             {entry.ef}
                           </td>
                           <td className="px-3 py-2 font-mono" style={{ color: 'var(--color-text-2)', fontFamily: 'var(--font-mono)' }}>
-                            {entry.slack}d
+                            {entry.ls}
+                          </td>
+                          <td className="px-3 py-2 font-mono" style={{ color: 'var(--color-text-2)', fontFamily: 'var(--font-mono)' }}>
+                            {entry.lf}
                           </td>
                           <td className="px-3 py-2">
                             <span
@@ -313,20 +326,27 @@ class DashboardInner extends React.Component<DashboardProps, DashboardState> {
             ) : (
               <>
                 {/* Task selector */}
-                <select
-                  value={slipTaskId}
-                  onChange={e => this.setState({ slipTaskId: e.target.value, slipDays: 0 })}
-                  className="w-full rounded px-3 py-2 text-xs mb-3"
-                  style={{
-                    background: 'var(--color-bg-2)',
-                    color: 'var(--color-text-0)',
-                    border: '1px solid var(--color-border-1)',
-                  }}
-                >
-                  {tasks.map(t => (
-                    <option key={t.id} value={t.id}>{t.title}</option>
-                  ))}
-                </select>
+                <div className="relative mb-3">
+                  <select
+                    value={slipTaskId}
+                    onChange={e => this.setState({ slipTaskId: e.target.value, slipDays: 0 })}
+                    className="w-full rounded px-3 py-2 text-xs appearance-none cursor-pointer outline-none focus:ring-1 focus:ring-amber-500/50"
+                    style={{
+                      background: 'var(--color-bg-2)',
+                      color: 'var(--color-text-0)',
+                      border: '1px solid var(--color-border-1)',
+                    }}
+                  >
+                    {tasks.map(t => (
+                      <option key={t.id} value={t.id}>{t.title}</option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-text-3)' }}>
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </div>
+                </div>
 
                 {/* Slider */}
                 <div className="mb-3">
@@ -340,8 +360,8 @@ class DashboardInner extends React.Component<DashboardProps, DashboardState> {
                     max={14}
                     value={slipDays}
                     onChange={e => this.setState({ slipDays: parseInt(e.target.value) })}
-                    className="w-full"
-                    style={{ accentColor: 'var(--color-accent)' }}
+                    className="w-full cursor-pointer h-1.5 rounded-full appearance-none bg-zinc-200 dark:bg-zinc-800 outline-none"
+                    style={{ accentColor: 'var(--color-critical)' }}
                     aria-label="Slip days"
                   />
                 </div>
@@ -396,52 +416,42 @@ class DashboardInner extends React.Component<DashboardProps, DashboardState> {
           {slackTasks.length === 0 ? (
             <p className="text-xs" style={{ color: 'var(--color-text-4)' }}>No tasks to display.</p>
           ) : (
-            <svg
-              width="100%"
-              viewBox={`0 0 500 ${slackTasks.length * 24 + 8}`}
-              style={{ overflow: 'visible' }}
-            >
-              {slackTasks.map(({ task, entry }, i) => {
+            <div className="flex flex-col gap-2">
+              {slackTasks.map(({ task, entry }) => {
                 if (!entry) return null;
-                const barWidth = maxSlack > 0 ? (entry.slack / maxSlack) * 340 : 0;
-                const y = i * 24 + 4;
-
+                const percentage = maxSlack > 0 ? (entry.slack / maxSlack) * 100 : 0;
+                const isCritical = entry.isCritical;
+                const isNearCritical = !isCritical && entry.slack <= 2;
+                
                 return (
-                  <g key={task.id}>
-                    {/* Task name */}
-                    <text
-                      x={0}
-                      y={y + 14}
-                      fill="var(--color-text-2)"
-                      fontSize="11"
-                      fontFamily="var(--font-ui)"
-                    >
-                      {task.title.length > 18 ? task.title.slice(0, 18) + '…' : task.title}
-                    </text>
-                    {/* Bar */}
-                    <rect
-                      x={150}
-                      y={y + 2}
-                      width={Math.max(barWidth, entry.isCritical ? 0 : 2)}
-                      height={16}
-                      rx={2}
-                      fill={entry.isCritical ? 'var(--color-critical)' : 'var(--color-border-2)'}
-                      opacity={0.7}
-                    />
-                    {/* Value */}
-                    <text
-                      x={150 + barWidth + 6}
-                      y={y + 14}
-                      fill="var(--color-text-3)"
-                      fontSize="11"
-                      fontFamily="var(--font-mono)"
-                    >
-                      {entry.slack}d
-                    </text>
-                  </g>
+                  <div key={task.id} className="flex items-center text-xs">
+                    <div className="w-48 shrink-0 truncate pr-4" style={{ color: 'var(--color-text-1)' }} title={task.title}>
+                      {task.title}
+                    </div>
+                    <div className="flex-1 flex items-center h-4 relative">
+                      {isCritical ? (
+                        <div className="h-full rounded-sm" style={{ width: '4px', background: 'var(--color-critical)' }} />
+                      ) : (
+                        <div
+                          className="h-full rounded-sm transition-all"
+                          style={{
+                            width: `${Math.max(percentage, 1)}%`,
+                            background: isNearCritical ? 'var(--color-status-inprogress)' : 'var(--color-border-3)',
+                            opacity: isNearCritical ? 1 : 0.6
+                          }}
+                        />
+                      )}
+                      <div
+                        className="ml-2 font-mono text-2xs"
+                        style={{ color: isCritical ? 'var(--color-critical)' : 'var(--color-text-3)' }}
+                      >
+                        {entry.slack}d
+                      </div>
+                    </div>
+                  </div>
                 );
               })}
-            </svg>
+            </div>
           )}
         </div>
       </div>

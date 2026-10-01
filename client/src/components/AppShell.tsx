@@ -140,21 +140,32 @@ export function AppShell({ children }: AppShellProps) {
             </span>
 
             {/* Project start date */}
-            <div className="hidden sm:flex items-center gap-1.5">
-              <Calendar size={14} strokeWidth={1.5} style={{ color: 'var(--color-text-3)' }} />
-              <input
-                type="date"
-                value={settings.startDate}
-                onChange={(e) => updateSettings({ ...settings, startDate: e.target.value })}
-                className="font-mono text-2xs border rounded px-1.5 py-0.5"
-                style={{
-                  color: 'var(--color-text-2)',
-                  background: 'var(--color-bg-2)',
-                  borderColor: 'var(--color-border-1)',
-                  fontFamily: 'var(--font-mono)',
-                }}
-                aria-label="Project start date"
-              />
+            <div className="hidden sm:flex items-center gap-1.5 relative">
+              <span className="text-2xs uppercase tracking-wider font-semibold" style={{ color: 'var(--color-text-3)' }}>
+                Start:
+              </span>
+              <div className="relative group flex items-center">
+                {/* Visual date display */}
+                <div
+                  className="font-mono text-xs border rounded px-2 py-1 flex items-center gap-1.5 cursor-pointer group-hover:bg-black/5 dark:group-hover:bg-white/5 transition-colors"
+                  style={{
+                    background: 'var(--color-bg-2)',
+                    borderColor: 'var(--color-border-1)',
+                    color: 'var(--color-text-1)',
+                  }}
+                >
+                  <Calendar size={13} strokeWidth={1.5} style={{ color: 'var(--color-text-3)' }} />
+                  {new Date(settings.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                </div>
+                {/* Native picker overlay */}
+                <input
+                  type="date"
+                  value={settings.startDate}
+                  onChange={(e) => updateSettings({ ...settings, startDate: e.target.value })}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  title="Select project start date"
+                />
+              </div>
             </div>
           </div>
 

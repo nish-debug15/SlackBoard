@@ -27,7 +27,7 @@ function isMockMode(): boolean {
 async function callGroq(systemPrompt: string, userMessage: string, retryWithError?: string): Promise<string> {
   const Groq = (await import('groq-sdk')).default;
   const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
-  const model = process.env.GROQ_MODEL || 'llama-3.1-8b-instant';
+  const model = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
 
   const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
     { role: 'system', content: systemPrompt }
