@@ -27,7 +27,7 @@ function isMockMode(): boolean {
 async function callClaude(systemPrompt: string, userMessage: string, retryWithError?: string): Promise<string> {
   const Anthropic = (await import('@anthropic-ai/sdk')).default;
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  const model = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
+  const model = process.env.ANTHROPIC_MODEL || 'claude-sonnet-5-5';
 
   const messages: Array<{ role: 'user' | 'assistant'; content: string }> = [];
   

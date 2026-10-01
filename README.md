@@ -70,5 +70,10 @@ Three passes over the dependency DAG:
 
 `Slack = LS - ES`. Slack `0` → task is on the **critical path**: any delay to it delays the whole project. Slack `> 0` → task has float, can slip by that much without affecting the deadline.
 
+## Assignment Notes (CIE-2)
+
+- **Tutorial Deviation (`@dnd-kit` vs `react-dnd`):** The assignment suggested following a React Trello clone tutorial (which frequently relies on the legacy `react-dnd` library). I elected to use `@dnd-kit` instead, as it is a modern, accessible, and maintained standard for React drag-and-drop. The core Kanban layout and state management pattern from the tutorials were retained, but the drag engine was upgraded to meet production-tier standards.
+- **Modeling Semantics (Baseline Plan vs Progress):** The CPM engine currently models the **baseline plan**. Therefore, moving a task to the "Done" column does not alter the project's projected end date (it continues to consume its planned duration in the schedule). This is an intentional design choice for baseline tracking, as opposed to a "remaining duration" model where completed tasks count as 0d.
+
 ## License
 MIT
