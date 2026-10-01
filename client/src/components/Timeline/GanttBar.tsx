@@ -56,7 +56,7 @@ export function GanttBar({
           opacity: isHighlighted ? 1 : 0.85,
           position: 'relative',
         }}
-      </div>
+      />
 
       {/* Slack bar (hatched) */}
       {!entry.isCritical && entry.slack > 0 && (
