@@ -27,7 +27,7 @@ Built as a full-stack monorepo with an Express.js backend and a React client.
 ### Server
 - Express.js
 - `zod` for request validation
-- `groq-sdk` for the Copilot (Llama 3.3 70B)
+- `groq-sdk` for the Copilot (`openai/gpt-oss-120b`)
 - `express-rate-limit` and `helmet` for security
 - JSON file persistence (`server/data/db.json`)
 
