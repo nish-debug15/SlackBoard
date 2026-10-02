@@ -56,6 +56,9 @@ The client will be available at http://localhost:5173/ and the server at http://
 
 ## Architecture
 
+![Figure 1: SlackBoard system architecture](docs/architecture/slackboard-architecture.png)
+*Figure 1: SlackBoard system architecture*
+
 - **`@slackboard/shared`:** The core CPM engine, types, and seed data.
 - **`@slackboard/server`:** Express API server. Validates requests, ensures acyclic dependencies, and persists data.
 - **`@slackboard/client`:** React SPA. Uses optimistic updates and a read-through cache for instant UI interactions.
