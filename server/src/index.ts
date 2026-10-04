@@ -20,10 +20,14 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));
 
-app.use('/api/tasks', tasksRouter);
-app.use('/api/schedule', scheduleRouter);
-app.use('/api/copilot', copilotRouter);
-app.use('/api/settings', settingsRouter);
+import { requireAuth } from './middleware/auth.js';
+import { authRouter } from './routes/auth.js';
+
+app.use('/api/auth', authRouter);
+app.use('/api/tasks', requireAuth, tasksRouter);
+app.use('/api/schedule', requireAuth, scheduleRouter);
+app.use('/api/copilot', requireAuth, copilotRouter);
+app.use('/api/settings', requireAuth, settingsRouter);
 
 app.use(errorHandler);
 

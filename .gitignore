@@ -5,3 +5,6 @@ dist/
 .vite/
 
 docs/REPORT_FACTS.md
+
+server/data/users.json
+server/data/test-users.json
