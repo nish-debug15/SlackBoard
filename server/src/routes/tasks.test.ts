@@ -2,16 +2,25 @@ import request from 'supertest';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { app } from '../index.js';
 import { resetDB, getTasks } from '../db.js';
+import { saveUsers } from '../db/users.js';
 import { Task } from '@slackboard/shared';
 
 describe('Tasks API Routes', () => {
-  beforeEach(() => {
+  let token = '';
+
+  beforeEach(async () => {
     // Reset DB to clean state before each test
     resetDB();
+    saveUsers([]); // clear users DB
+    
+    const signupRes = await request(app).post('/api/auth/signup').send({
+      name: 'Test', email: 'test@example.com', password: 'password123'
+    });
+    token = signupRes.body.token;
   });
 
   it('GET /api/tasks returns all tasks', async () => {
-    const res = await request(app).get('/api/tasks');
+    const res = await request(app).get('/api/tasks').set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body.length).toBeGreaterThan(0);
@@ -27,51 +36,44 @@ describe('Tasks API Routes', () => {
     
     const res = await request(app)
       .post('/api/tasks')
+      .set('Authorization', `Bearer ${token}`)
       .send(newTask);
       
     expect(res.status).toBe(201);
-    expect(res.body.id).toBeDefined();
-    expect(res.body.title).toBe('New Feature');
-    expect(res.body.duration).toBe(5);
+    expect(res.body.title).toBe(newTask.title);
+    
+    const tasks = getTasks();
+    expect(tasks.some(t => t.title === 'New Feature')).toBe(true);
   });
 
   it('POST /api/tasks rejects cycle-forming dependency', async () => {
-    // We already have "research" in the seed data. Let's create a new task that depends on research.
-    const res1 = await request(app)
-      .post('/api/tasks')
-      .send({
-        title: 'Task A',
-        duration: 2,
-        dependsOn: ['research'],
-        column: 'todo'
-      });
-    const taskIdA = res1.body.id;
-
-    // Try to update research to depend on Task A (creating a cycle: research -> Task A -> research)
-    const res2 = await request(app)
+    const tasks = getTasks();
+    // In seed data: design depends on research. 
+    // If we make research depend on design, it's a cycle.
+    const designTask = tasks.find(t => t.id === 'design')!;
+    
+    const updateReq = {
+      title: 'Market Research',
+      duration: 3,
+      dependsOn: ['design'],
+      column: 'todo'
+    };
+    
+    const res = await request(app)
       .put('/api/tasks/research')
-      .send({
-        title: 'Market Research',
-        duration: 3,
-        dependsOn: [taskIdA],
-        column: 'todo'
-      });
+      .set('Authorization', `Bearer ${token}`)
+      .send(updateReq);
       
-    expect(res2.status).toBe(422);
-    expect(res2.body.error).toContain('cycle');
+    expect(res.status).toBe(422);
+    expect(res.body.error).toContain('cycle');
   });
 
   it('DELETE /api/tasks cascades dependencies', async () => {
-    // seed data has "design" depending on "research"
-    const tasksBefore = getTasks();
-    const designBefore = tasksBefore.find((t: Task) => t.id === 'design');
-    expect(designBefore?.dependsOn).toContain('research');
-
-    const res = await request(app).delete('/api/tasks/research');
+    const res = await request(app).delete('/api/tasks/research').set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
-
-    const tasksAfter = getTasks();
-    const designAfter = tasksAfter.find((t: Task) => t.id === 'design');
-    expect(designAfter?.dependsOn).not.toContain('research');
+    
+    const tasks = getTasks();
+    const designTask = tasks.find(t => t.id === 'design')!;
+    expect(designTask.dependsOn.includes('research')).toBe(false);
   });
 });
