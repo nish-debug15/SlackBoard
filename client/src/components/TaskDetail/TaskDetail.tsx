@@ -108,13 +108,26 @@ export function TaskDetail() {
     e.preventDefault();
     if (!validate()) return;
     setSaving(true);
+    setErrors(prev => ({ ...prev, submit: '' }));
 
     if (isNew) {
       const result = await addTask({ title: title.trim(), duration, dependsOn, column });
-      if (result) navigate('/board');
+      if (result.success) {
+        navigate('/board');
+      } else {
+        let msg = result.error;
+        if (result.cycle) msg += ` (Creates a cycle: ${result.cycle.join(' -> ')})`;
+        setErrors(prev => ({ ...prev, submit: msg }));
+      }
     } else {
-      const success = await updateTask({ id: id!, title: title.trim(), duration, dependsOn, column });
-      if (success) navigate('/board');
+      const result = await updateTask({ id: id!, title: title.trim(), duration, dependsOn, column });
+      if (result.success) {
+        navigate('/board');
+      } else {
+        let msg = result.error;
+        if (result.cycle) msg += ` (Creates a cycle: ${result.cycle.join(' -> ')})`;
+        setErrors(prev => ({ ...prev, submit: msg }));
+      }
     }
     setSaving(false);
   };
@@ -158,6 +171,11 @@ export function TaskDetail() {
         </div>
 
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
+          {errors.submit && (
+            <div className="p-3 rounded text-sm font-medium" style={{ color: 'var(--color-error)', background: 'var(--color-error-bg)', border: '1px solid var(--color-error)' }}>
+              {errors.submit}
+            </div>
+          )}
           {/* Title */}
           <div>
             <label className="block text-2xs font-medium mb-1" style={{ color: 'var(--color-text-3)' }}>

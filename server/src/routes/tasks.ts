@@ -40,11 +40,12 @@ tasksRouter.post('/', validate(CreateTaskSchema), (req: Request, res: Response, 
     // Check for cycles with the new task added
     const tempTasks = [...tasks, newTask];
     for (const depId of dependsOn) {
-      const cyclePath = wouldCreateCycle(tasks, depId, newTask.id);
-      // Actually we need to check the full new task list
-      // The new task depends on depId, so check if that creates a cycle
-      // Since the task is new and nothing depends on it yet, cycles can't form
-      // But let's be safe
+      const cyclePath = wouldCreateCycle(tempTasks, depId, newTask.id);
+      if (cyclePath) {
+        throw new AppError(422, 'Adding this task would create a cycle in the dependency graph', {
+          cycle: cyclePath.map(id => tempTasks.find(t => t.id === id)?.title || id)
+        });
+      }
     }
 
     // Verify the entire graph is still valid
@@ -93,12 +94,14 @@ tasksRouter.put('/:id', validate(UpdateTaskSchema), (req: Request, res: Response
       const newDeps = dependsOn.filter((d: string) => !tasks[idx].dependsOn.includes(d));
       for (const depId of newDeps) {
         const cyclePath = wouldCreateCycle(
-          tasks.filter(t => t.id !== id).concat([{ ...tasks[idx], dependsOn: tasks[idx].dependsOn }]),
+          tempTasks,
           depId,
           id
         );
         if (cyclePath) {
-          throw new AppError(422, 'This dependency would create a cycle', { cycle: cyclePath });
+          throw new AppError(422, 'This dependency would create a cycle', { 
+            cycle: cyclePath.map(cId => tempTasks.find(t => t.id === cId)?.title || cId) 
+          });
         }
       }
       throw new AppError(422, 'This update would create a cycle in the dependency graph');

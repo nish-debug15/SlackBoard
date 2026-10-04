@@ -12,8 +12,8 @@ interface TasksContextValue {
   settings: ProjectSettings;
   loading: boolean;
   error: string | null;
-  addTask: (task: Omit<Task, 'id'>) => Promise<Task | null>;
-  updateTask: (task: Task) => Promise<boolean>;
+  addTask: (task: Omit<Task, 'id'>) => Promise<{ success: true; task: Task } | { success: false; error: string; cycle?: string[] }>;
+  updateTask: (task: Task) => Promise<{ success: true } | { success: false; error: string; cycle?: string[] }>;
   deleteTask: (id: string) => Promise<{ cascadedDependents: Array<{ id: string; title: string }> } | null>;
   moveTask: (id: string, column: ColumnId) => Promise<boolean>;
   updateSettings: (settings: ProjectSettings) => Promise<boolean>;
@@ -81,7 +81,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
   const clearError = useCallback(() => setError(null), []);
 
-  const addTask = useCallback(async (taskData: Omit<Task, 'id'>): Promise<Task | null> => {
+  const addTask = useCallback(async (taskData: Omit<Task, 'id'>): Promise<{ success: true; task: Task } | { success: false; error: string; cycle?: string[] }> => {
     // Optimistic: generate temp ID
     const tempId = crypto.randomUUID();
     const optimistic: Task = { ...taskData, id: tempId };
@@ -97,18 +97,18 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         const data = await res.json();
         setTasks(prev => prev.filter(t => t.id !== tempId)); // Rollback
         setError(data.error || 'Failed to create task');
-        return null;
+        return { success: false, error: data.error || 'Failed to create task', cycle: data.details?.cycle };
       }
       const created: Task = await res.json();
       setTasks(prev => prev.map(t => t.id === tempId ? created : t));
-      return created;
-    } catch {
+      return { success: true, task: created };
+    } catch (e: any) {
       // Keep optimistic update if server is down
-      return optimistic;
+      return { success: true, task: optimistic };
     }
   }, []);
 
-  const updateTask = useCallback(async (task: Task): Promise<boolean> => {
+  const updateTask = useCallback(async (task: Task): Promise<{ success: true } | { success: false; error: string; cycle?: string[] }> => {
     const prev = tasks;
     setTasks(current => current.map(t => t.id === task.id ? task : t));
 
@@ -122,11 +122,11 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         const data = await res.json();
         setTasks(prev); // Rollback
         setError(data.error || 'Failed to update task');
-        return false;
+        return { success: false, error: data.error || 'Failed to update task', cycle: data.details?.cycle };
       }
-      return true;
-    } catch {
-      return true; // Keep optimistic if server down
+      return { success: true };
+    } catch (e: any) {
+      return { success: true }; // Keep optimistic if server down
     }
   }, [tasks]);
 
