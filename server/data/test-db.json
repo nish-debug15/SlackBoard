@@ -1,29 +1,18 @@
 {
   "tasks": [
     {
-      "id": "research",
-      "title": "Market Research",
-      "column": "done",
-      "duration": 3,
-      "dependsOn": []
-    },
-    {
       "id": "design",
       "title": "UI/UX Design",
       "column": "done",
       "duration": 5,
-      "dependsOn": [
-        "research"
-      ]
+      "dependsOn": []
     },
     {
       "id": "api-spec",
       "title": "API Specification",
       "column": "done",
       "duration": 2,
-      "dependsOn": [
-        "research"
-      ]
+      "dependsOn": []
     },
     {
       "id": "frontend",
