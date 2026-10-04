@@ -33,9 +33,14 @@ export function LoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        throw new Error(res.ok ? 'Invalid JSON response' : 'Cannot connect to server. Is the backend running?');
+      }
       if (!res.ok) {
-        throw new Error(data.error || 'Login failed');
+        throw new Error(data?.error || 'Login failed');
       }
       login(data.token, data.user);
       navigate('/board');

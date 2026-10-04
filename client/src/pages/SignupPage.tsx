@@ -42,9 +42,14 @@ export function SignupPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password })
       });
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        throw new Error(res.ok ? 'Invalid JSON response' : 'Cannot connect to server. Is the backend running?');
+      }
       if (!res.ok) {
-        throw new Error(data.error || 'Signup failed');
+        throw new Error(data?.error || 'Signup failed');
       }
       login(data.token, data.user);
       navigate('/board');
