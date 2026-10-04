@@ -11,8 +11,10 @@ import {
   ChevronRight,
   Calendar,
   Clock,
+  LogOut,
 } from 'lucide-react';
 import { useTasks } from '../context/TasksProvider';
+import { useAuth } from '../context/AuthProvider';
 import { useTheme } from '../context/ThemeProvider';
 import { CopilotPanel } from './CopilotPanel';
 
@@ -29,6 +31,7 @@ const NAV_ITEMS = [
 export function AppShell({ children }: AppShellProps) {
   const { schedule, settings, updateSettings } = useTasks();
   const { theme, resolvedTheme, setTheme } = useTheme();
+  const { user, logout } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [copilotOpen, setCopilotOpen] = useState(false);
   const location = useLocation();
@@ -191,6 +194,28 @@ export function AppShell({ children }: AppShellProps) {
                 </span>
               )}
             </div>
+
+            {user && (
+              <div className="flex items-center gap-3 border-l pl-3 ml-1" style={{ borderColor: 'var(--color-border-1)' }}>
+                <span className="text-xs font-medium truncate max-w-[120px]" style={{ color: 'var(--color-text-1)' }} title={user.email}>
+                  {user.name}
+                </span>
+                <button
+                  onClick={logout}
+                  className="flex items-center justify-center rounded transition-colors duration-100 hover:opacity-80"
+                  style={{
+                    color: 'var(--color-error)',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                  aria-label="Log out"
+                  title="Log out"
+                >
+                  <LogOut size={15} strokeWidth={1.5} />
+                </button>
+              </div>
+            )}
 
             {/* Theme toggle */}
             <button

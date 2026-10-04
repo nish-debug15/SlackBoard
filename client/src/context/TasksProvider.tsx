@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import { Task, Schedule, ProjectSettings, computeSchedule, getSeedTasks, getDefaultSettings } from '@slackboard/shared';
 import type { ColumnId, CopilotProposal } from '@slackboard/shared';
+import { useAuth } from './AuthProvider';
 
-const API_BASE = '/api';
+const API_BASE = 'http://localhost:3001/api';
 const TASKS_STORAGE_KEY = 'slackboard_tasks';
 const SETTINGS_STORAGE_KEY = 'slackboard_settings';
 
@@ -33,6 +34,7 @@ function loadFromStorage<T>(key: string, fallback: T): T {
 }
 
 export function TasksProvider({ children }: { children: ReactNode }) {
+  const { token, logout } = useAuth();
   const [tasks, setTasks] = useState<Task[]>(() => loadFromStorage(TASKS_STORAGE_KEY, getSeedTasks()));
   const [settings, setSettings] = useState<ProjectSettings>(() => loadFromStorage(SETTINGS_STORAGE_KEY, getDefaultSettings()));
   const [schedule, setSchedule] = useState<Schedule>(() => computeSchedule(tasks));
@@ -55,12 +57,16 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
   // Fetch from server on mount
   useEffect(() => {
+    if (!token) {
+      setLoading(false);
+      return;
+    }
     let cancelled = false;
     async function fetchInitial() {
       try {
         const [tasksRes, settingsRes] = await Promise.all([
-          fetch(`${API_BASE}/tasks`),
-          fetch(`${API_BASE}/settings`),
+          authFetch(`${API_BASE}/tasks`),
+          authFetch(`${API_BASE}/settings`),
         ]);
         if (!cancelled && tasksRes.ok) {
           const serverTasks = await tasksRes.json();
@@ -77,9 +83,17 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     }
     fetchInitial();
     return () => { cancelled = true; };
-  }, []);
+  }, [token]);
 
   const clearError = useCallback(() => setError(null), []);
+
+  const authFetch = useCallback(async (url: string, options: RequestInit = {}) => {
+    const headers = { ...options.headers };
+    if (token) (headers as any)['Authorization'] = `Bearer ${token}`;
+    const res = await fetch(url, { ...options, headers });
+    if (res.status === 401) logout();
+    return res;
+  }, [token, logout]);
 
   const addTask = useCallback(async (taskData: Omit<Task, 'id'>): Promise<{ success: true; task: Task } | { success: false; error: string; cycle?: string[] }> => {
     // Optimistic: generate temp ID
@@ -88,7 +102,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     setTasks(prev => [...prev, optimistic]);
 
     try {
-      const res = await fetch(`${API_BASE}/tasks`, {
+      const res = await authFetch(`${API_BASE}/tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(taskData),
@@ -113,7 +127,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     setTasks(current => current.map(t => t.id === task.id ? task : t));
 
     try {
-      const res = await fetch(`${API_BASE}/tasks/${task.id}`, {
+      const res = await authFetch(`${API_BASE}/tasks/${task.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(task),
@@ -142,7 +156,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     );
 
     try {
-      const res = await fetch(`${API_BASE}/tasks/${id}`, { method: 'DELETE' });
+      const res = await authFetch(`${API_BASE}/tasks/${id}`, { method: 'DELETE' });
       if (!res.ok) {
         setTasks(prev); // Rollback
         const data = await res.json();
@@ -161,7 +175,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     setTasks(current => current.map(t => t.id === id ? { ...t, column } : t));
 
     try {
-      const res = await fetch(`${API_BASE}/tasks/${id}/column`, {
+      const res = await authFetch(`${API_BASE}/tasks/${id}/column`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ column }),
@@ -181,7 +195,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     setSettings(newSettings);
 
     try {
-      const res = await fetch(`${API_BASE}/settings`, {
+      const res = await authFetch(`${API_BASE}/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newSettings),
@@ -198,7 +212,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
   const resetData = useCallback(async (): Promise<boolean> => {
     try {
-      const res = await fetch(`${API_BASE}/settings/reset`, { method: 'POST' });
+      const res = await authFetch(`${API_BASE}/settings/reset`, { method: 'POST' });
       if (res.ok) {
         const data = await res.json();
         setTasks(data.tasks);
