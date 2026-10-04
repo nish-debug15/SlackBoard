@@ -44,16 +44,16 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   // Recompute schedule when tasks change
   useEffect(() => {
     setSchedule(computeSchedule(tasks));
-  }, [tasks]);
+  }, [tasks, authFetch]);
 
   // Sync to localStorage
   useEffect(() => {
     localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
-  }, [tasks]);
+  }, [tasks, authFetch]);
 
   useEffect(() => {
     localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
-  }, [settings]);
+  }, [settings, authFetch]);
 
   // Fetch from server on mount
   useEffect(() => {
@@ -120,7 +120,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       // Keep optimistic update if server is down
       return { success: true, task: optimistic };
     }
-  }, []);
+  }, [authFetch]);
 
   const updateTask = useCallback(async (task: Task): Promise<{ success: true } | { success: false; error: string; cycle?: string[] }> => {
     const prev = tasks;
@@ -142,7 +142,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     } catch (e: any) {
       return { success: true }; // Keep optimistic if server down
     }
-  }, [tasks]);
+  }, [tasks, authFetch]);
 
   const deleteTask = useCallback(async (id: string): Promise<{ cascadedDependents: Array<{ id: string; title: string }> } | null> => {
     const prev = tasks;
@@ -168,7 +168,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     } catch {
       return { cascadedDependents: dependents.map(d => ({ id: d.id, title: d.title })) };
     }
-  }, [tasks]);
+  }, [tasks, authFetch]);
 
   const moveTask = useCallback(async (id: string, column: ColumnId): Promise<boolean> => {
     const prev = tasks;
@@ -188,7 +188,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     } catch {
       return true;
     }
-  }, [tasks]);
+  }, [tasks, authFetch]);
 
   const updateSettings = useCallback(async (newSettings: ProjectSettings): Promise<boolean> => {
     const prev = settings;
@@ -208,7 +208,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     } catch {
       return true;
     }
-  }, [settings]);
+  }, [settings, authFetch]);
 
   const resetData = useCallback(async (): Promise<boolean> => {
     try {
@@ -226,7 +226,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       return true;
     }
     return false;
-  }, []);
+  }, [authFetch]);
 
   return (
     <TasksContext.Provider value={{

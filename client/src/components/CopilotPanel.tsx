@@ -24,9 +24,12 @@ export function CopilotPanel({ onClose }: CopilotPanelProps) {
   const { token, logout } = useAuth();
   const { addTask, schedule } = useTasks();
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<'plan' | 'ask'>('plan');
+  const [planMessages, setPlanMessages] = useState<Message[]>([]);
+  const [askMessages, setAskMessages] = useState<Message[]>([]);
+  const messages = mode === 'plan' ? planMessages : askMessages;
+  const setMessages = mode === 'plan' ? setPlanMessages : setAskMessages;
+  const [loading, setLoading] = useState(false);
   const [isMockMode, setIsMockMode] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
