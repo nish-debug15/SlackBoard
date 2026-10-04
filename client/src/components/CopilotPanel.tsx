@@ -19,6 +19,7 @@ interface Message {
 }
 
 export function CopilotPanel({ onClose }: CopilotPanelProps) {
+  const { token, logout } = useAuth();
   const { addTask, schedule } = useTasks();
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
