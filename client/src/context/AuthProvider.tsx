@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const API_BASE = 'http://localhost:3001/api';
+const API_BASE = '/api';
 
 export interface User {
   id: string;

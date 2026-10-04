@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
 import { LayoutDashboard } from 'lucide-react';
 
-const API_BASE = 'http://localhost:3001/api';
+const API_BASE = '/api';
 
 export function SignupPage() {
   const [name, setName] = useState('');

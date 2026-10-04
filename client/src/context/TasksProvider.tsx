@@ -3,7 +3,7 @@ import { Task, Schedule, ProjectSettings, computeSchedule, getSeedTasks, getDefa
 import type { ColumnId, CopilotProposal } from '@slackboard/shared';
 import { useAuth } from './AuthProvider';
 
-const API_BASE = 'http://localhost:3001/api';
+const API_BASE = '/api';
 const TASKS_STORAGE_KEY = 'slackboard_tasks';
 const SETTINGS_STORAGE_KEY = 'slackboard_settings';
 
