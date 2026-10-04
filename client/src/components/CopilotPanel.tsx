@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Bot, X, Send, Sparkles, Check, Trash2, AlertCircle, Loader2 } from 'lucide-react';
 import { useTasks } from '../context/TasksProvider';
+import { useAuth } from '../context/AuthProvider';
 import type { CopilotProposal, CopilotProposedTask } from '@slackboard/shared';
 
 interface CopilotPanelProps {
@@ -50,13 +51,18 @@ export function CopilotPanel({ onClose }: CopilotPanelProps) {
     setLoading(true);
 
     try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
       if (mode === 'plan') {
         const res = await fetch('/api/copilot/plan', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ prompt: trimmed }),
           signal: AbortSignal.timeout(30000),
         });
+
+        if (res.status === 401) { logout(); return; }
 
         if (!res.ok) {
           const data = await res.json();
@@ -77,10 +83,12 @@ export function CopilotPanel({ onClose }: CopilotPanelProps) {
       } else {
         const res = await fetch('/api/copilot/ask', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ question: trimmed }),
           signal: AbortSignal.timeout(30000),
         });
+
+        if (res.status === 401) { logout(); return; }
 
         if (!res.ok) {
           const data = await res.json();
