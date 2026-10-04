@@ -56,7 +56,7 @@ The client will be available at http://localhost:5173/ and the server at http://
 
 ## Architecture
 
-![Figure 1: SlackBoard system architecture and request lifecycle](docs/architecture/slackboard-architecture.png)
+![Figure 1: SlackBoard system architecture and request lifecycle](SlackBoard/blob/main/SlackBoard_Architecture.png)
 *Figure 1: SlackBoard system architecture and request lifecycle*
 
 - **`@slackboard/shared`:** The core CPM engine, types, and seed data.
