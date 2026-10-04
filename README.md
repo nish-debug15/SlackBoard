@@ -1,6 +1,6 @@
 # SlackBoard
 
-SlackBoard is a production-tier Kanban board application that models task dependencies and computes the real project schedule using the **Critical Path Method (CPM)**. It also includes an AI Planning Copilot.
+SlackBoard is a Kanban board application that models task dependencies and computes the real project schedule using the **Critical Path Method (CPM)**. It also includes an AI Planning Copilot.
 
 Built as a full-stack monorepo with an Express.js backend and a React client. 
 
@@ -75,7 +75,6 @@ Three passes over the dependency DAG:
 
 ## Assignment Notes (CIE-2)
 
-- **Tutorial Deviation (`@dnd-kit` vs `react-dnd`):** The assignment suggested following a React Trello clone tutorial (which frequently relies on the legacy `react-dnd` library). I elected to use `@dnd-kit` instead, as it is a modern, accessible, and maintained standard for React drag-and-drop. The core Kanban layout and state management pattern from the tutorials were retained, but the drag engine was upgraded to meet production-tier standards.
 - **Modeling Semantics (Baseline Plan vs Progress):** The CPM engine currently models the **baseline plan**. Therefore, moving a task to the "Done" column does not alter the project's projected end date (it continues to consume its planned duration in the schedule). This is an intentional design choice for baseline tracking, as opposed to a "remaining duration" model where completed tasks count as 0d.
 
 ## License
