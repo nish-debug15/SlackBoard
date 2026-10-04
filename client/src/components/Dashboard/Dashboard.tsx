@@ -22,7 +22,7 @@ interface DashboardProps {
 interface DashboardState {
   slipTaskId: string;
   slipDays: number;
-  sortField: 'es' | 'ef' | 'slack' | 'title';
+  sortField: 'es' | 'ef' | 'ls' | 'lf' | 'slack' | 'title';
   sortAsc: boolean;
 }
 

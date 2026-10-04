@@ -2,6 +2,9 @@
   "name": "slackboard-monorepo",
   "private": true,
   "workspaces": ["shared", "server", "client"],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "concurrently \"npm run dev -w server\" \"npm run dev -w client\"",
     "build": "npm run build --workspaces --if-present",
