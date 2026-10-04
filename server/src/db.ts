@@ -5,7 +5,9 @@ import { Task, ProjectSettings } from '@slackboard/shared';
 import { getSeedTasks, getDefaultSettings } from '@slackboard/shared';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DB_PATH = resolve(__dirname, '../data/db.json');
+const DB_PATH = process.env.NODE_ENV === 'test' 
+  ? resolve(__dirname, '../data/test-db.json')
+  : resolve(__dirname, '../data/db.json');
 
 interface DB {
   tasks: Task[];
