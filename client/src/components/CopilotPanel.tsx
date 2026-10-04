@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { Bot, X, Send, Sparkles, Check, Trash2, AlertCircle, Loader2 } from 'lucide-react';
 import { useTasks } from '../context/TasksProvider';
 import { useAuth } from '../context/AuthProvider';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import type { CopilotProposal, CopilotProposedTask } from '@slackboard/shared';
 
 interface CopilotPanelProps {
@@ -255,15 +257,33 @@ export function CopilotPanel({ onClose }: CopilotPanelProps) {
             {msg.role === 'assistant' && (
               <div className="flex flex-col gap-2">
                 <div
-                  className="rounded-lg px-3 py-2 text-xs whitespace-pre-wrap"
-                  style={{
-                    background: 'var(--color-bg-2)',
-                    color: 'var(--color-text-1)',
-                    border: '1px solid var(--color-border-1)',
-                  }}
-                >
-                  {msg.content}
-                </div>
+                    className="rounded-lg px-3 py-2 text-xs"
+                    style={{
+                      background: 'var(--color-bg-2)',
+                      color: 'var(--color-text-1)',
+                      border: '1px solid var(--color-border-1)',
+                      wordBreak: 'break-word',
+                      overflowX: 'auto',
+                    }}
+                  >
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        table: ({ node, ...props }) => <table style={{ borderCollapse: 'collapse', width: '100%', marginBottom: '1em' }} {...props} />,
+                        th: ({ node, ...props }) => <th style={{ border: '1px solid var(--color-border-1)', padding: '4px', textAlign: 'left', background: 'var(--color-bg-1)' }} {...props} />,
+                        td: ({ node, ...props }) => <td style={{ border: '1px solid var(--color-border-1)', padding: '4px' }} {...props} />,
+                        p: ({ node, ...props }) => <p style={{ marginBottom: '0.75em', marginTop: 0 }} {...props} />,
+                        ul: ({ node, ...props }) => <ul style={{ listStyleType: 'disc', paddingLeft: '20px', marginBottom: '0.75em' }} {...props} />,
+                        ol: ({ node, ...props }) => <ol style={{ listStyleType: 'decimal', paddingLeft: '20px', marginBottom: '0.75em' }} {...props} />,
+                        h3: ({ node, ...props }) => <h3 style={{ fontWeight: 600, fontSize: '1.1em', marginTop: '1em', marginBottom: '0.5em' }} {...props} />,
+                        h4: ({ node, ...props }) => <h4 style={{ fontWeight: 600, marginTop: '1em', marginBottom: '0.5em' }} {...props} />,
+                        a: ({ node, ...props }) => <a style={{ color: 'var(--color-accent)', textDecoration: 'underline' }} {...props} />,
+                        code: ({ node, ...props }) => <code style={{ background: 'var(--color-bg-1)', padding: '2px 4px', borderRadius: '4px', fontFamily: 'var(--font-mono)', fontSize: '0.9em' }} {...props} />,
+                      }}
+                    >
+                      {msg.content}
+                    </ReactMarkdown>
+                  </div>
 
                 {/* Proposal card */}
                 {msg.proposal && (
