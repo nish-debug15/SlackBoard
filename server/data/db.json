@@ -124,6 +124,15 @@
         "staging",
         "monitoring"
       ]
+    },
+    {
+      "id": "7ccfe01d-0ca9-4a7f-ba0b-e7b3ab3ef4b2",
+      "title": "Code Review",
+      "duration": 2,
+      "dependsOn": [
+        "integration"
+      ],
+      "column": "todo"
     }
   ],
   "settings": {

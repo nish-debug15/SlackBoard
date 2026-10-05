@@ -44,16 +44,16 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   // Recompute schedule when tasks change
   useEffect(() => {
     setSchedule(computeSchedule(tasks));
-  }, [tasks, authFetch]);
+  }, [tasks]);
 
   // Sync to localStorage
   useEffect(() => {
     localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
-  }, [tasks, authFetch]);
+  }, [tasks]);
 
   useEffect(() => {
     localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
-  }, [settings, authFetch]);
+  }, [settings]);
 
   // Fetch from server on mount
   useEffect(() => {
