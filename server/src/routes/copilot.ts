@@ -112,7 +112,11 @@ copilotRouter.post('/plan', validate(CopilotPlanSchema), async (req: Request, re
       return;
     }
 
-    const systemPrompt = `You are a project planning assistant. Given the current project tasks and schedule, generate a plan of new tasks.
+    let proposedTasks;
+    let projected;
+    
+    try {
+      const systemPrompt = `You are a project planning assistant. Given the current project tasks and schedule, generate a plan of new tasks.
 
 Current tasks:
 ${JSON.stringify(tasks.map(t => ({ id: t.id, title: t.title, duration: t.duration, dependsOn: t.dependsOn })), null, 2)}
@@ -129,28 +133,11 @@ Respond with ONLY a JSON array of task objects. Each object must have:
 Do NOT create circular dependencies. Tasks can only depend on tasks that come before them in the array.
 Respond with ONLY the JSON array, no other text.`;
 
-    let responseText = await callGroq(systemPrompt, prompt);
-    let proposedTasks = parsePlanFromResponse(responseText);
-
-    // Validate no cycles
-    const allTasks: Task[] = [
-      ...tasks,
-      ...proposedTasks.map(t => ({
-        id: t.tempId,
-        title: t.title,
-        duration: t.duration,
-        dependsOn: t.dependsOn,
-        column: 'todo' as const,
-      })),
-    ];
-
-    let testSchedule = computeSchedule(allTasks);
-    if (allTasks.length > 0 && Object.keys(testSchedule.entries).length === 0) {
-      // Cycle detected - retry once
-      responseText = await callGroq(systemPrompt, prompt, 'The proposed dependencies created a cycle.');
+      let responseText = await callGroq(systemPrompt, prompt);
       proposedTasks = parsePlanFromResponse(responseText);
 
-      const retryTasks: Task[] = [
+      // Validate no cycles
+      const allTasks: Task[] = [
         ...tasks,
         ...proposedTasks.map(t => ({
           id: t.tempId,
@@ -161,31 +148,69 @@ Respond with ONLY the JSON array, no other text.`;
         })),
       ];
 
-      testSchedule = computeSchedule(retryTasks);
-      if (retryTasks.length > 0 && Object.keys(testSchedule.entries).length === 0) {
-        throw new AppError(422, 'AI-generated plan contains dependency cycles even after retry. Please try a different prompt.');
+      let testSchedule = computeSchedule(allTasks);
+      if (allTasks.length > 0 && Object.keys(testSchedule.entries).length === 0) {
+        responseText = await callGroq(systemPrompt, prompt, 'The proposed dependencies created a cycle.');
+        proposedTasks = parsePlanFromResponse(responseText);
+        const retryTasks: Task[] = [
+          ...tasks,
+          ...proposedTasks.map(t => ({
+            id: t.tempId,
+            title: t.title,
+            duration: t.duration,
+            dependsOn: t.dependsOn,
+            column: 'todo' as const,
+          })),
+        ];
+        testSchedule = computeSchedule(retryTasks);
+        if (retryTasks.length > 0 && Object.keys(testSchedule.entries).length === 0) {
+          throw new Error('AI-generated plan contains dependency cycles even after retry.');
+        }
       }
+
+      projected = computeSchedule([
+        ...tasks,
+        ...proposedTasks.map(t => ({
+          id: t.tempId,
+          title: t.title,
+          duration: t.duration,
+          dependsOn: t.dependsOn,
+          column: 'todo' as const,
+        })),
+      ]);
+      
+      res.json({
+        mock: false,
+        proposal: {
+          tasks: proposedTasks,
+          currentProjectDuration: schedule.projectDuration,
+          projectedProjectDuration: projected.projectDuration,
+        },
+      });
+    } catch (err: any) {
+      console.warn('AI Copilot failed, falling back to mock plan. Error:', err.message);
+      
+      const mockFullTasks: Task[] = [
+        ...tasks,
+        ...MOCK_PLAN.tasks.map(t => ({
+          id: t.tempId,
+          title: t.title,
+          duration: t.duration,
+          dependsOn: t.dependsOn,
+          column: 'todo' as const,
+        })),
+      ];
+      projected = computeSchedule(mockFullTasks);
+
+      res.json({
+        mock: true,
+        proposal: {
+          tasks: MOCK_PLAN.tasks,
+          currentProjectDuration: schedule.projectDuration,
+          projectedProjectDuration: projected.projectDuration,
+        },
+      });
     }
-
-    const projected = computeSchedule([
-      ...tasks,
-      ...proposedTasks.map(t => ({
-        id: t.tempId,
-        title: t.title,
-        duration: t.duration,
-        dependsOn: t.dependsOn,
-        column: 'todo' as const,
-      })),
-    ]);
-
-    res.json({
-      mock: false,
-      proposal: {
-        tasks: proposedTasks,
-        currentProjectDuration: schedule.projectDuration,
-        projectedProjectDuration: projected.projectDuration,
-      },
-    });
   } catch (err) {
     next(err);
   }
@@ -243,12 +268,20 @@ ${slipInfo}
 
 Explain clearly and concisely. Use the specific numbers from the schedule. Do not perform CPM calculations yourself — use the pre-computed values above.`;
 
-    const responseText = await callGroq(systemPrompt, question);
+    try {
+      const responseText = await callGroq(systemPrompt, question);
 
-    res.json({
-      mock: false,
-      answer: responseText,
-    });
+      res.json({
+        mock: false,
+        answer: responseText,
+      });
+    } catch (err: any) {
+      console.warn('AI Copilot failed, falling back to mock answer. Error:', err.message);
+      res.json({
+        mock: true,
+        answer: `Based on the current schedule (${schedule.projectDuration} days):\n\nCritical path: ${criticalTasks.join(' → ')}\n\nThe critical path determines the minimum project duration. Tasks on this path have zero slack — any delay directly extends the project.${slipInfo ? '\n' + slipInfo : '\n\nTasks with slack can absorb delays without affecting the project end date.'}`,
+      });
+    }
   } catch (err) {
     next(err);
   }

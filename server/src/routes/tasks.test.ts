@@ -7,16 +7,19 @@ import { Task } from '@slackboard/shared';
 
 describe('Tasks API Routes', () => {
   let token = '';
+  let userId = '';
 
   beforeEach(async () => {
     // Reset DB to clean state before each test
-    resetDB();
     saveUsers([]); // clear users DB
     
     const signupRes = await request(app).post('/api/auth/signup').send({
       name: 'Test', email: 'test@example.com', password: 'password123'
     });
     token = signupRes.body.token;
+    userId = signupRes.body.user.id;
+    
+    resetDB(userId);
   });
 
   it('GET /api/tasks returns all tasks', async () => {
@@ -42,12 +45,12 @@ describe('Tasks API Routes', () => {
     expect(res.status).toBe(201);
     expect(res.body.title).toBe(newTask.title);
     
-    const tasks = getTasks();
+    const tasks = getTasks(userId);
     expect(tasks.some(t => t.title === 'New Feature')).toBe(true);
   });
 
   it('POST /api/tasks rejects cycle-forming dependency', async () => {
-    const tasks = getTasks();
+    const tasks = getTasks(userId);
     // In seed data: design depends on research. 
     // If we make research depend on design, it's a cycle.
     const designTask = tasks.find(t => t.id === 'design')!;
@@ -72,7 +75,7 @@ describe('Tasks API Routes', () => {
     const res = await request(app).delete('/api/tasks/research').set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
     
-    const tasks = getTasks();
+    const tasks = getTasks(userId);
     const designTask = tasks.find(t => t.id === 'design')!;
     expect(designTask.dependsOn.includes('research')).toBe(false);
   });

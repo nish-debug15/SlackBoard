@@ -5,6 +5,7 @@ dist/
 .vite/
 
 docs/REPORT_FACTS.md
+SHOWCASE_BRIEF.md
 
 server/data/users.json
 server/data/test-users.json

@@ -34,26 +34,43 @@ function loadFromStorage<T>(key: string, fallback: T): T {
 }
 
 export function TasksProvider({ children }: { children: ReactNode }) {
-  const { token, logout } = useAuth();
-  const [tasks, setTasks] = useState<Task[]>(() => loadFromStorage(TASKS_STORAGE_KEY, getSeedTasks()));
-  const [settings, setSettings] = useState<ProjectSettings>(() => loadFromStorage(SETTINGS_STORAGE_KEY, getDefaultSettings()));
-  const [schedule, setSchedule] = useState<Schedule>(() => computeSchedule(tasks));
+  const { token, user, logout } = useAuth();
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [settings, setSettings] = useState<ProjectSettings>(getDefaultSettings());
+  const [schedule, setSchedule] = useState<Schedule>(() => computeSchedule([]));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Load and sync localStorage per user
+  useEffect(() => {
+    if (user) {
+      try {
+        const storedTasks = localStorage.getItem(`${TASKS_STORAGE_KEY}_${user.id}`);
+        if (storedTasks) setTasks(JSON.parse(storedTasks));
+        
+        const storedSettings = localStorage.getItem(`${SETTINGS_STORAGE_KEY}_${user.id}`);
+        if (storedSettings) setSettings(JSON.parse(storedSettings));
+      } catch (e) {
+        console.error('Failed to parse localStorage', e);
+      }
+    } else {
+      setTasks([]);
+      setSettings(getDefaultSettings());
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user && tasks.length > 0) localStorage.setItem(`${TASKS_STORAGE_KEY}_${user.id}`, JSON.stringify(tasks));
+  }, [tasks, user]);
+
+  useEffect(() => {
+    if (user) localStorage.setItem(`${SETTINGS_STORAGE_KEY}_${user.id}`, JSON.stringify(settings));
+  }, [settings, user]);
 
   // Recompute schedule when tasks change
   useEffect(() => {
     setSchedule(computeSchedule(tasks));
   }, [tasks]);
-
-  // Sync to localStorage
-  useEffect(() => {
-    localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
-  }, [tasks]);
-
-  useEffect(() => {
-    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
-  }, [settings]);
 
   // Fetch from server on mount
   useEffect(() => {
