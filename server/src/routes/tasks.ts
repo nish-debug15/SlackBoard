@@ -11,15 +11,15 @@ export const tasksRouter = Router();
 tasksRouter.use(apiLimiter);
 
 // GET /api/tasks
-tasksRouter.get('/', (_req: Request, res: Response) => {
-  const tasks = getTasks();
+tasksRouter.get('/', (req: Request, res: Response) => {
+  const tasks = getTasks((req as any).userId);
   res.json(tasks);
 });
 
 // POST /api/tasks
 tasksRouter.post('/', validate(CreateTaskSchema), (req: Request, res: Response, next: NextFunction) => {
   try {
-    const tasks = getTasks();
+    const tasks = getTasks((req as any).userId);
     const { title, duration, dependsOn, column } = req.body;
 
     // Validate that all dependency IDs exist
@@ -55,7 +55,7 @@ tasksRouter.post('/', validate(CreateTaskSchema), (req: Request, res: Response, 
     }
 
     tasks.push(newTask);
-    setTasks(tasks);
+    setTasks((req as any).userId, tasks);
     res.status(201).json(newTask);
   } catch (err) {
     next(err);
@@ -65,7 +65,7 @@ tasksRouter.post('/', validate(CreateTaskSchema), (req: Request, res: Response, 
 // PUT /api/tasks/:id
 tasksRouter.put('/:id', validate(UpdateTaskSchema), (req: Request, res: Response, next: NextFunction) => {
   try {
-    const tasks = getTasks();
+    const tasks = getTasks((req as any).userId);
     const id = req.params.id as string;
     const idx = tasks.findIndex(t => t.id === id);
     if (idx === -1) {
@@ -108,7 +108,7 @@ tasksRouter.put('/:id', validate(UpdateTaskSchema), (req: Request, res: Response
     }
 
     tasks[idx] = updatedTask;
-    setTasks(tasks);
+    setTasks((req as any).userId, tasks);
     res.json(updatedTask);
   } catch (err) {
     next(err);
@@ -118,7 +118,7 @@ tasksRouter.put('/:id', validate(UpdateTaskSchema), (req: Request, res: Response
 // PATCH /api/tasks/:id/column
 tasksRouter.patch('/:id/column', validate(PatchColumnSchema), (req: Request, res: Response, next: NextFunction) => {
   try {
-    const tasks = getTasks();
+    const tasks = getTasks((req as any).userId);
     const id = req.params.id as string;
     const idx = tasks.findIndex(t => t.id === id);
     if (idx === -1) {
@@ -126,7 +126,7 @@ tasksRouter.patch('/:id/column', validate(PatchColumnSchema), (req: Request, res
     }
 
     tasks[idx] = { ...tasks[idx], column: req.body.column };
-    setTasks(tasks);
+    setTasks((req as any).userId, tasks);
     res.json(tasks[idx]);
   } catch (err) {
     next(err);
@@ -136,7 +136,7 @@ tasksRouter.patch('/:id/column', validate(PatchColumnSchema), (req: Request, res
 // DELETE /api/tasks/:id
 tasksRouter.delete('/:id', (req: Request, res: Response, next: NextFunction) => {
   try {
-    let tasks = getTasks();
+    let tasks = getTasks((req as any).userId);
     const id = req.params.id as string;
     const task = tasks.find(t => t.id === id);
     if (!task) {
@@ -156,7 +156,7 @@ tasksRouter.delete('/:id', (req: Request, res: Response, next: NextFunction) => 
 
     // Remove the task
     tasks = tasks.filter(t => t.id !== id);
-    setTasks(tasks);
+    setTasks((req as any).userId, tasks);
 
     res.json({
       deleted: id,

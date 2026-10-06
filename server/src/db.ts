@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { Task, ProjectSettings } from '@slackboard/shared';
+import { Task, ProjectSettings, getSeedTasks, getDefaultSettings } from '@slackboard/shared';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DB_PATH = process.env.NODE_ENV === 'test' 
@@ -87,13 +87,9 @@ export function setSettings(userId: string, settings: ProjectSettings): void {
 
 export function resetDB(userId: string): UserData {
   const db = readDB();
-  const today = new Date();
   db[userId] = {
-    tasks: [],
-    settings: {
-      name: 'My Project',
-      startDate: today.toISOString().split('T')[0],
-    }
+    tasks: getSeedTasks(),
+    settings: getDefaultSettings()
   };
   writeDB(db);
   return db[userId];

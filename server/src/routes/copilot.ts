@@ -84,7 +84,7 @@ function parsePlanFromResponse(text: string): Array<{ tempId: string; title: str
 copilotRouter.post('/plan', validate(CopilotPlanSchema), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { prompt } = req.body;
-    const tasks = getTasks();
+    const tasks = getTasks((req as any).userId);
     const schedule = computeSchedule(tasks);
 
     if (isMockMode()) {
@@ -195,7 +195,7 @@ Respond with ONLY the JSON array, no other text.`;
 copilotRouter.post('/ask', validate(CopilotAskSchema), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { question } = req.body;
-    const tasks = getTasks();
+    const tasks = getTasks((req as any).userId);
     const schedule = computeSchedule(tasks);
 
     // Build context from the schedule
