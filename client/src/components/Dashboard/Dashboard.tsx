@@ -57,7 +57,7 @@ class DashboardInner extends React.Component<DashboardProps, DashboardState> {
   getEndDate(): string | null {
     const { settings, schedule } = this.props;
     if (!settings.startDate || schedule.projectDuration === 0) return null;
-    const start = new Date(settings.startDate);
+    const start = new Date(settings.startDate + 'T12:00:00');
     const end = new Date(start);
     end.setDate(end.getDate() + schedule.projectDuration);
     return end.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -66,7 +66,7 @@ class DashboardInner extends React.Component<DashboardProps, DashboardState> {
   getSlipEndDate(slipDaysImpact: number): string | null {
     const { settings, schedule } = this.props;
     if (!settings.startDate) return null;
-    const start = new Date(settings.startDate);
+    const start = new Date(settings.startDate + 'T12:00:00');
     const end = new Date(start);
     end.setDate(end.getDate() + schedule.projectDuration + slipDaysImpact);
     return end.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });

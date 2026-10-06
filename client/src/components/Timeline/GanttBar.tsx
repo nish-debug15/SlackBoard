@@ -34,7 +34,7 @@ export function GanttBar({
 
   // Calendar dates for tooltip
   const toDate = (days: number) => {
-    const d = new Date(startDate);
+    const d = new Date(startDate + 'T12:00:00');
     d.setDate(d.getDate() + days);
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };

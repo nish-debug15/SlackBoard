@@ -72,7 +72,7 @@ export function Timeline() {
   // Generate calendar dates for header
   const headerDates = useMemo(() => {
     const dates: string[] = [];
-    const start = new Date(settings.startDate);
+    const start = new Date(settings.startDate + 'T12:00:00');
     for (let i = 0; i <= totalDays; i++) {
       const d = new Date(start);
       d.setDate(d.getDate() + i);

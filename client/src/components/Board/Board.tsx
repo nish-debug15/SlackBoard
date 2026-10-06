@@ -52,6 +52,21 @@ export function Board() {
 
   return (
     <div>
+      {tasks.length === 0 && (
+        <div className="mb-6 p-6 rounded-lg border border-dashed flex flex-col items-center justify-center text-center" style={{ borderColor: 'var(--color-border-2)', background: 'var(--color-bg-1)' }}>
+          <h2 className="text-lg font-semibold mb-2" style={{ color: 'var(--color-text-0)' }}>Welcome to your new project!</h2>
+          <p className="text-sm mb-4 max-w-md" style={{ color: 'var(--color-text-2)' }}>
+            Start by adding some tasks manually, or use the <strong>Copilot</strong> (top right) to automatically generate a schedule with dependencies.
+          </p>
+          <div className="flex gap-4 text-xs font-medium" style={{ color: 'var(--color-text-3)' }}>
+            <span>1. Add tasks</span>
+            <span>&rarr;</span>
+            <span>2. Map dependencies</span>
+            <span>&rarr;</span>
+            <span>3. Check Timeline & Dashboard</span>
+          </div>
+        </div>
+      )}
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}

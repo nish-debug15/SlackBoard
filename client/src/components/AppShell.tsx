@@ -156,16 +156,21 @@ export function AppShell({ children }: AppShellProps) {
                     borderColor: 'var(--color-border-1)',
                     color: 'var(--color-text-1)',
                   }}
+                  onClick={() => {
+                    const input = document.getElementById('project-start-date') as HTMLInputElement;
+                    if (input && input.showPicker) input.showPicker();
+                  }}
                 >
                   <Calendar size={13} strokeWidth={1.5} style={{ color: 'var(--color-text-3)' }} />
-                  {new Date(settings.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  {new Date(settings.startDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </div>
                 {/* Native picker overlay */}
                 <input
+                  id="project-start-date"
                   type="date"
                   value={settings.startDate}
                   onChange={(e) => updateSettings({ ...settings, startDate: e.target.value })}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  className="absolute inset-0 w-full h-full opacity-0 pointer-events-none"
                   title="Select project start date"
                 />
               </div>
