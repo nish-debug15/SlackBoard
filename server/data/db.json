@@ -58,12 +58,12 @@
       {
         "id": "docs",
         "title": "Documentation",
-        "column": "todo",
         "duration": 3,
         "dependsOn": [
           "content",
-          "api-spec"
-        ]
+          "research"
+        ],
+        "column": "todo"
       },
       {
         "id": "integration",
@@ -132,7 +132,7 @@
     ],
     "settings": {
       "name": "Product Launch",
-      "startDate": "2026-10-06"
+      "startDate": "2026-10-07"
     }
   }
 }

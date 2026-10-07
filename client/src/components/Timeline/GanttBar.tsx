@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import type { Task, ScheduleEntry } from '@slackboard/shared';
 
 interface GanttBarProps {
@@ -25,6 +26,9 @@ export function GanttBar({
   startDate,
 }: GanttBarProps) {
   const [showTooltip, setShowTooltip] = useState(false);
+  const [pos, setPos] = useState({ top: 0, left: 0, bottom: 0, flipY: false, winW: 1000, winH: 1000 });
+  const barRef = useRef<HTMLDivElement>(null);
+
   const barLeft = entry.es * dayWidth;
   const barWidth = Math.max(task.duration * dayWidth - 2, 4);
   const slackWidth = entry.slack * dayWidth;
@@ -39,12 +43,34 @@ export function GanttBar({
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
+  const handleMouseEnter = () => {
+    setShowTooltip(true);
+    onHover();
+    if (barRef.current) {
+      const rect = barRef.current.getBoundingClientRect();
+      setPos({
+        top: rect.top,
+        left: rect.left,
+        bottom: rect.bottom,
+        flipY: rect.top < 160,
+        winW: window.innerWidth,
+        winH: window.innerHeight
+      });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setShowTooltip(false);
+    onLeave();
+  };
+
   return (
     <div
+      ref={barRef}
       className="absolute z-10"
       style={{ left: `${barLeft}px`, top: `${barTop}px` }}
-      onMouseEnter={() => { setShowTooltip(true); onHover(); }}
-      onMouseLeave={() => { setShowTooltip(false); onLeave(); }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {/* Main bar */}
       <div
@@ -71,12 +97,12 @@ export function GanttBar({
       )}
 
       {/* Tooltip */}
-      {showTooltip && (
+      {showTooltip && document.body && createPortal(
         <div
-          className="absolute z-50 rounded border px-2.5 py-2 pointer-events-none"
+          className="fixed z-[9999] rounded border px-2.5 py-2 pointer-events-none shadow-lg"
           style={{
-            bottom: `${barHeight + 6}px`,
-            left: '0',
+            ...(pos.flipY ? { top: `${pos.bottom + 6}px` } : { bottom: `${pos.winH - pos.top + 6}px` }),
+            left: `${Math.max(10, Math.min(pos.left, pos.winW - 220))}px`,
             background: 'var(--color-bg-2)',
             borderColor: 'var(--color-border-2)',
             whiteSpace: 'nowrap',
@@ -92,15 +118,16 @@ export function GanttBar({
             <span style={{ color: 'var(--color-text-3)' }}>EF</span>
             <span style={{ color: 'var(--color-text-1)' }}>{entry.ef} ({toDate(entry.ef)})</span>
             <span style={{ color: 'var(--color-text-3)' }}>LS</span>
-            <span style={{ color: 'var(--color-text-1)' }}>{entry.ls}</span>
+            <span style={{ color: 'var(--color-text-1)' }}>{entry.ls} ({toDate(entry.ls)})</span>
             <span style={{ color: 'var(--color-text-3)' }}>LF</span>
-            <span style={{ color: 'var(--color-text-1)' }}>{entry.lf}</span>
+            <span style={{ color: 'var(--color-text-1)' }}>{entry.lf} ({toDate(entry.lf)})</span>
             <span style={{ color: 'var(--color-text-3)' }}>Slack</span>
             <span style={{ color: entry.isCritical ? 'var(--color-critical)' : 'var(--color-text-1)' }}>
               {entry.slack}d {entry.isCritical && '(critical)'}
             </span>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

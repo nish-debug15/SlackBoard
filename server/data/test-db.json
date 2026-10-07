@@ -1202,5 +1202,533 @@
       "name": "Product Launch",
       "startDate": "2026-10-07"
     }
+  },
+  "9b640c1b-1844-41b1-95fa-af5eca142b81": {
+    "tasks": [
+      {
+        "id": "research",
+        "title": "Market Research",
+        "column": "done",
+        "duration": 3,
+        "dependsOn": []
+      },
+      {
+        "id": "design",
+        "title": "UI/UX Design",
+        "column": "done",
+        "duration": 5,
+        "dependsOn": [
+          "research"
+        ]
+      },
+      {
+        "id": "api-spec",
+        "title": "API Specification",
+        "column": "done",
+        "duration": 2,
+        "dependsOn": [
+          "research"
+        ]
+      },
+      {
+        "id": "frontend",
+        "title": "Frontend Development",
+        "column": "inprogress",
+        "duration": 8,
+        "dependsOn": [
+          "design"
+        ]
+      },
+      {
+        "id": "api-dev",
+        "title": "API Development",
+        "column": "inprogress",
+        "duration": 6,
+        "dependsOn": [
+          "api-spec",
+          "design"
+        ]
+      },
+      {
+        "id": "content",
+        "title": "Content Strategy",
+        "column": "done",
+        "duration": 4,
+        "dependsOn": []
+      },
+      {
+        "id": "docs",
+        "title": "Documentation",
+        "column": "todo",
+        "duration": 3,
+        "dependsOn": [
+          "content",
+          "api-spec"
+        ]
+      },
+      {
+        "id": "integration",
+        "title": "Integration Testing",
+        "column": "todo",
+        "duration": 3,
+        "dependsOn": [
+          "frontend",
+          "api-dev"
+        ]
+      },
+      {
+        "id": "qa",
+        "title": "QA & Bug Fixes",
+        "column": "todo",
+        "duration": 4,
+        "dependsOn": [
+          "integration"
+        ]
+      },
+      {
+        "id": "review",
+        "title": "Content Review",
+        "column": "todo",
+        "duration": 2,
+        "dependsOn": [
+          "docs"
+        ]
+      },
+      {
+        "id": "analytics",
+        "title": "Analytics Setup",
+        "column": "todo",
+        "duration": 2,
+        "dependsOn": []
+      },
+      {
+        "id": "monitoring",
+        "title": "Monitoring Setup",
+        "column": "todo",
+        "duration": 1,
+        "dependsOn": [
+          "analytics"
+        ]
+      },
+      {
+        "id": "staging",
+        "title": "Staging Deployment",
+        "column": "todo",
+        "duration": 2,
+        "dependsOn": [
+          "qa",
+          "review"
+        ]
+      },
+      {
+        "id": "deploy",
+        "title": "Production Deploy",
+        "column": "todo",
+        "duration": 1,
+        "dependsOn": [
+          "staging",
+          "monitoring"
+        ]
+      }
+    ],
+    "settings": {
+      "name": "Product Launch",
+      "startDate": "2026-10-07"
+    }
+  },
+  "14f31f08-c47b-4803-b8eb-34ebb52d74fa": {
+    "tasks": [
+      {
+        "id": "research",
+        "title": "Market Research",
+        "column": "done",
+        "duration": 3,
+        "dependsOn": []
+      },
+      {
+        "id": "design",
+        "title": "UI/UX Design",
+        "column": "done",
+        "duration": 5,
+        "dependsOn": [
+          "research"
+        ]
+      },
+      {
+        "id": "api-spec",
+        "title": "API Specification",
+        "column": "done",
+        "duration": 2,
+        "dependsOn": [
+          "research"
+        ]
+      },
+      {
+        "id": "frontend",
+        "title": "Frontend Development",
+        "column": "inprogress",
+        "duration": 8,
+        "dependsOn": [
+          "design"
+        ]
+      },
+      {
+        "id": "api-dev",
+        "title": "API Development",
+        "column": "inprogress",
+        "duration": 6,
+        "dependsOn": [
+          "api-spec",
+          "design"
+        ]
+      },
+      {
+        "id": "content",
+        "title": "Content Strategy",
+        "column": "done",
+        "duration": 4,
+        "dependsOn": []
+      },
+      {
+        "id": "docs",
+        "title": "Documentation",
+        "column": "todo",
+        "duration": 3,
+        "dependsOn": [
+          "content",
+          "api-spec"
+        ]
+      },
+      {
+        "id": "integration",
+        "title": "Integration Testing",
+        "column": "todo",
+        "duration": 3,
+        "dependsOn": [
+          "frontend",
+          "api-dev"
+        ]
+      },
+      {
+        "id": "qa",
+        "title": "QA & Bug Fixes",
+        "column": "todo",
+        "duration": 4,
+        "dependsOn": [
+          "integration"
+        ]
+      },
+      {
+        "id": "review",
+        "title": "Content Review",
+        "column": "todo",
+        "duration": 2,
+        "dependsOn": [
+          "docs"
+        ]
+      },
+      {
+        "id": "analytics",
+        "title": "Analytics Setup",
+        "column": "todo",
+        "duration": 2,
+        "dependsOn": []
+      },
+      {
+        "id": "monitoring",
+        "title": "Monitoring Setup",
+        "column": "todo",
+        "duration": 1,
+        "dependsOn": [
+          "analytics"
+        ]
+      },
+      {
+        "id": "staging",
+        "title": "Staging Deployment",
+        "column": "todo",
+        "duration": 2,
+        "dependsOn": [
+          "qa",
+          "review"
+        ]
+      },
+      {
+        "id": "deploy",
+        "title": "Production Deploy",
+        "column": "todo",
+        "duration": 1,
+        "dependsOn": [
+          "staging",
+          "monitoring"
+        ]
+      },
+      {
+        "id": "75fada3b-d870-463c-a062-84cc59ae15e5",
+        "title": "New Feature",
+        "duration": 5,
+        "dependsOn": [],
+        "column": "todo"
+      }
+    ],
+    "settings": {
+      "name": "Product Launch",
+      "startDate": "2026-10-07"
+    }
+  },
+  "7f1ecd0e-e48f-44da-8309-be251f80ae5f": {
+    "tasks": [
+      {
+        "id": "research",
+        "title": "Market Research",
+        "column": "done",
+        "duration": 3,
+        "dependsOn": []
+      },
+      {
+        "id": "design",
+        "title": "UI/UX Design",
+        "column": "done",
+        "duration": 5,
+        "dependsOn": [
+          "research"
+        ]
+      },
+      {
+        "id": "api-spec",
+        "title": "API Specification",
+        "column": "done",
+        "duration": 2,
+        "dependsOn": [
+          "research"
+        ]
+      },
+      {
+        "id": "frontend",
+        "title": "Frontend Development",
+        "column": "inprogress",
+        "duration": 8,
+        "dependsOn": [
+          "design"
+        ]
+      },
+      {
+        "id": "api-dev",
+        "title": "API Development",
+        "column": "inprogress",
+        "duration": 6,
+        "dependsOn": [
+          "api-spec",
+          "design"
+        ]
+      },
+      {
+        "id": "content",
+        "title": "Content Strategy",
+        "column": "done",
+        "duration": 4,
+        "dependsOn": []
+      },
+      {
+        "id": "docs",
+        "title": "Documentation",
+        "column": "todo",
+        "duration": 3,
+        "dependsOn": [
+          "content",
+          "api-spec"
+        ]
+      },
+      {
+        "id": "integration",
+        "title": "Integration Testing",
+        "column": "todo",
+        "duration": 3,
+        "dependsOn": [
+          "frontend",
+          "api-dev"
+        ]
+      },
+      {
+        "id": "qa",
+        "title": "QA & Bug Fixes",
+        "column": "todo",
+        "duration": 4,
+        "dependsOn": [
+          "integration"
+        ]
+      },
+      {
+        "id": "review",
+        "title": "Content Review",
+        "column": "todo",
+        "duration": 2,
+        "dependsOn": [
+          "docs"
+        ]
+      },
+      {
+        "id": "analytics",
+        "title": "Analytics Setup",
+        "column": "todo",
+        "duration": 2,
+        "dependsOn": []
+      },
+      {
+        "id": "monitoring",
+        "title": "Monitoring Setup",
+        "column": "todo",
+        "duration": 1,
+        "dependsOn": [
+          "analytics"
+        ]
+      },
+      {
+        "id": "staging",
+        "title": "Staging Deployment",
+        "column": "todo",
+        "duration": 2,
+        "dependsOn": [
+          "qa",
+          "review"
+        ]
+      },
+      {
+        "id": "deploy",
+        "title": "Production Deploy",
+        "column": "todo",
+        "duration": 1,
+        "dependsOn": [
+          "staging",
+          "monitoring"
+        ]
+      }
+    ],
+    "settings": {
+      "name": "Product Launch",
+      "startDate": "2026-10-07"
+    }
+  },
+  "8ec03947-2546-4642-b04b-afc2be0e76d1": {
+    "tasks": [
+      {
+        "id": "design",
+        "title": "UI/UX Design",
+        "column": "done",
+        "duration": 5,
+        "dependsOn": []
+      },
+      {
+        "id": "api-spec",
+        "title": "API Specification",
+        "column": "done",
+        "duration": 2,
+        "dependsOn": []
+      },
+      {
+        "id": "frontend",
+        "title": "Frontend Development",
+        "column": "inprogress",
+        "duration": 8,
+        "dependsOn": [
+          "design"
+        ]
+      },
+      {
+        "id": "api-dev",
+        "title": "API Development",
+        "column": "inprogress",
+        "duration": 6,
+        "dependsOn": [
+          "api-spec",
+          "design"
+        ]
+      },
+      {
+        "id": "content",
+        "title": "Content Strategy",
+        "column": "done",
+        "duration": 4,
+        "dependsOn": []
+      },
+      {
+        "id": "docs",
+        "title": "Documentation",
+        "column": "todo",
+        "duration": 3,
+        "dependsOn": [
+          "content",
+          "api-spec"
+        ]
+      },
+      {
+        "id": "integration",
+        "title": "Integration Testing",
+        "column": "todo",
+        "duration": 3,
+        "dependsOn": [
+          "frontend",
+          "api-dev"
+        ]
+      },
+      {
+        "id": "qa",
+        "title": "QA & Bug Fixes",
+        "column": "todo",
+        "duration": 4,
+        "dependsOn": [
+          "integration"
+        ]
+      },
+      {
+        "id": "review",
+        "title": "Content Review",
+        "column": "todo",
+        "duration": 2,
+        "dependsOn": [
+          "docs"
+        ]
+      },
+      {
+        "id": "analytics",
+        "title": "Analytics Setup",
+        "column": "todo",
+        "duration": 2,
+        "dependsOn": []
+      },
+      {
+        "id": "monitoring",
+        "title": "Monitoring Setup",
+        "column": "todo",
+        "duration": 1,
+        "dependsOn": [
+          "analytics"
+        ]
+      },
+      {
+        "id": "staging",
+        "title": "Staging Deployment",
+        "column": "todo",
+        "duration": 2,
+        "dependsOn": [
+          "qa",
+          "review"
+        ]
+      },
+      {
+        "id": "deploy",
+        "title": "Production Deploy",
+        "column": "todo",
+        "duration": 1,
+        "dependsOn": [
+          "staging",
+          "monitoring"
+        ]
+      }
+    ],
+    "settings": {
+      "name": "Product Launch",
+      "startDate": "2026-10-07"
+    }
   }
 }

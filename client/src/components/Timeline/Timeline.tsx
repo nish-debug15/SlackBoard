@@ -168,12 +168,13 @@ export function Timeline() {
                     {task.title}
                   </span>
                   {entry?.isCritical && (
-                    <AlertTriangle
-                      size={11}
-                      strokeWidth={1.5}
-                      className="shrink-0 ml-1"
-                      style={{ color: 'var(--color-critical)' }}
-                    />
+                    <span title="Critical task" className="shrink-0 ml-1 inline-flex items-center">
+                      <AlertTriangle
+                        size={11}
+                        strokeWidth={1.5}
+                        style={{ color: 'var(--color-critical)' }}
+                      />
+                    </span>
                   )}
                 </div>
               );
