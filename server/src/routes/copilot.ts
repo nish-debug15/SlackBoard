@@ -266,7 +266,7 @@ ${tasks.map(t => {
 }).join('\n')}
 ${slipInfo}
 
-Explain clearly and concisely. Use the specific numbers from the schedule. Do not perform CPM calculations yourself — use the pre-computed values above.`;
+Explain clearly and concisely. NEVER use tables or HTML tags. Use short plain markdown only: a 1-line headline answer, then short bullets, bold for task names and numbers. Max ~120 words unless the user asks for detail. Dependencies as "Task A → Task B" lines, one per bullet. Use the specific numbers from the schedule. Do not perform CPM calculations yourself — use the pre-computed values above.`;
 
     try {
       const responseText = await callGroq(systemPrompt, question);

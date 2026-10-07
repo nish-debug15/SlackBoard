@@ -260,7 +260,7 @@ export function CopilotPanel({ onClose }: CopilotPanelProps) {
             {msg.role === 'assistant' && (
               <div className="flex flex-col gap-2">
                 <div
-                    className="rounded-lg px-3 py-2 text-xs"
+                    className="rounded-lg px-3 py-2 text-xs copilot-md"
                     style={{
                       background: 'var(--color-bg-2)',
                       color: 'var(--color-text-1)',
@@ -269,23 +269,20 @@ export function CopilotPanel({ onClose }: CopilotPanelProps) {
                       overflowX: 'auto',
                     }}
                   >
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        table: ({ node, ...props }) => <table style={{ borderCollapse: 'collapse', width: '100%', marginBottom: '1em' }} {...props} />,
-                        th: ({ node, ...props }) => <th style={{ border: '1px solid var(--color-border-1)', padding: '4px', textAlign: 'left', background: 'var(--color-bg-1)' }} {...props} />,
-                        td: ({ node, ...props }) => <td style={{ border: '1px solid var(--color-border-1)', padding: '4px' }} {...props} />,
-                        p: ({ node, ...props }) => <p style={{ marginBottom: '0.75em', marginTop: 0 }} {...props} />,
-                        ul: ({ node, ...props }) => <ul style={{ listStyleType: 'disc', paddingLeft: '20px', marginBottom: '0.75em' }} {...props} />,
-                        ol: ({ node, ...props }) => <ol style={{ listStyleType: 'decimal', paddingLeft: '20px', marginBottom: '0.75em' }} {...props} />,
-                        h3: ({ node, ...props }) => <h3 style={{ fontWeight: 600, fontSize: '1.1em', marginTop: '1em', marginBottom: '0.5em' }} {...props} />,
-                        h4: ({ node, ...props }) => <h4 style={{ fontWeight: 600, marginTop: '1em', marginBottom: '0.5em' }} {...props} />,
-                        a: ({ node, ...props }) => <a style={{ color: 'var(--color-accent)', textDecoration: 'underline' }} {...props} />,
-                        code: ({ node, ...props }) => <code style={{ background: 'var(--color-bg-1)', padding: '2px 4px', borderRadius: '4px', fontFamily: 'var(--font-mono)', fontSize: '0.9em' }} {...props} />,
-                      }}
-                    >
-                      {msg.content}
-                    </ReactMarkdown>
+                    <style>{`
+  .copilot-md table { border-collapse: collapse; width: 100%; font-size: 0.9em; margin-bottom: 1em; display: block; overflow-x: auto; }
+  .copilot-md th, .copilot-md td { border: 1px solid var(--color-border-1); padding: 6px 10px; min-width: 80px; white-space: normal; }
+  .copilot-md th:first-child, .copilot-md td:first-child { white-space: nowrap; font-weight: 500; min-width: 120px; }
+  .copilot-md p { margin-bottom: 1em; line-height: 1.6; }
+  .copilot-md p:last-child { margin-bottom: 0; }
+  .copilot-md ul { list-style-type: disc; padding-left: 20px; margin-bottom: 1em; }
+  .copilot-md li { margin-bottom: 0.6em; line-height: 1.6; }
+  .copilot-md strong { color: var(--color-text-1); font-weight: 700; }
+  .copilot-md code { background: var(--color-bg-1); padding: 2px 4px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.9em; }
+`}</style>
+<ReactMarkdown remarkPlugins={[remarkGfm]}>
+  {msg.content.replace(/<br\s*\/?>/gi, '\n').replace(/<\/?[a-z][\s\S]*?>/gi, '')}
+</ReactMarkdown>
                   </div>
 
                 {/* Proposal card */}

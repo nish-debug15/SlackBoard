@@ -8,7 +8,7 @@ scheduleRouter.use(apiLimiter);
 
 // GET /api/schedule - always derived, never stored
 scheduleRouter.get('/', (_req: Request, res: Response) => {
-  const tasks = getTasks((req as any).userId);
+  const tasks = getTasks((_req as any).userId);
   const schedule = computeSchedule(tasks);
   res.json(schedule);
 });

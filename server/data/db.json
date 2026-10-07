@@ -78,11 +78,11 @@
       {
         "id": "qa",
         "title": "QA & Bug Fixes",
-        "column": "todo",
-        "duration": 4,
+        "duration": 1,
         "dependsOn": [
           "integration"
-        ]
+        ],
+        "column": "todo"
       },
       {
         "id": "review",
